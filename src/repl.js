@@ -25,8 +25,8 @@ function getEditor() {
 }
 
 function getGhciPath() {
-    var path = 'ghci';
-    return path;
+    var ghciPath = vscode.workspace.getConfiguration('tidalcycles').get('ghciPath');
+    return ghciPath || 'ghci';
 }
 
 function start() {
@@ -59,10 +59,8 @@ function ensurePostWindow() {
 }
 
 function doSpawn() {
-    var ghciPath = vscode.workspace.getConfiguration('tidalcycles').get('ghciPath');
-    ghciPath = ghciPath || 'ghci';
 
-    repl = procspawn(ghciPath, ['-XOverloadedStrings']);
+    repl = procspawn(getGhciPath, ['-XOverloadedStrings']);
     repl.stderr.on('data', (data) => {
         console.error(data.toString('utf8'));
         post(data.toString('utf8'));
