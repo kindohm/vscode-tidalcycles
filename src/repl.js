@@ -3,6 +3,7 @@ var Selection = vscode.Selection;
 var procspawn = require('child_process').spawn;
 var Range = vscode.Range;
 var expression = require('./expression');
+var config = require('./config');
 
 var repl, postWindow, postWindowPane, postUri, postEditor;
 
@@ -24,10 +25,10 @@ function getEditor() {
     return vscode.window.activeTextEditor;
 }
 
-function getGhciPath() {
-    var ghciPath = vscode.workspace.getConfiguration('tidalcycles').get('ghciPath');
-    return ghciPath || 'ghci';
-}
+// function getGhciPath() {
+//     var ghciPath = vscode.workspace.getConfiguration('tidalcycles').get('ghciPath');
+//     return ghciPath || 'ghci';
+// }
 
 function start() {
     ensurePostWindow();
@@ -60,7 +61,7 @@ function ensurePostWindow() {
 
 function doSpawn() {
 
-    repl = procspawn(getGhciPath, ['-XOverloadedStrings']);
+    repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
     repl.stderr.on('data', (data) => {
         console.error(data.toString('utf8'));
         post(data.toString('utf8'));
@@ -86,11 +87,11 @@ function eval(isMultiline) {
 
 function feedback(range) {
 
-    var feedbackColor = vscode.workspace.getConfiguration('tidalcycles').get('feedbackColor');
-    feedbackColor = feedbackColor || 'rgba(100,250,100,0.25)';
+    // var feedbackColor = vscode.workspace.getConfiguration('tidalcycles').get('feedbackColor');
+    // feedbackColor = feedbackColor || 'rgba(100,250,100,0.25)';
 
     var flashDecorationType = vscode.window.createTextEditorDecorationType({
-        backgroundColor: feedbackColor
+        backgroundColor: config.feedbackColor()
     });
 
     getEditor().setDecorations(flashDecorationType, [range]);
@@ -134,7 +135,7 @@ function bootTidal() {
     // not get booted. Unsure of a way to check if the file exists first
     // before opening. openTextDocument() does not return an error. not
     // sure how to cleanly check for this.
-    var bootTidalPath = vscode.workspace.getConfiguration('tidalcycles').get('bootTidalPath');
+    var bootTidalPath = config.bootTidalPath();
 
     if (bootTidalPath) {
         var uri = vscode.Uri.parse('file:///' + bootTidalPath);
