@@ -19,3 +19,13 @@ function bootTidalPath() {
     return value || undefined;
 }
 exports.bootTidalPath = bootTidalPath;
+
+function showOutputInEditorTab() {
+    return getConfiguration(configSection).get('showOutputInEditorTab');
+}
+exports.showOutputInEditorTab = showOutputInEditorTab;
+
+function showOutputInConsoleChannel() {
+    return getConfiguration(configSection).get('showOutputInConsoleChannel');
+}
+exports.showOutputInConsoleChannel = showOutputInConsoleChannel;

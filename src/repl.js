@@ -4,16 +4,17 @@ var procspawn = require('child_process').spawn;
 var Range = vscode.Range;
 var expression = require('./expression');
 var config = require('./config');
+var postUriScheme = "tidalcycles";
 
-var repl, postWindow, postWindowPane, postUri, postEditor;
+var repl, postChannel, postTab, postUri, postEditor;
 
 function init(postWindowProvider) {
-    postWindowPane = postWindowProvider;
-    postUri = vscode.Uri.parse('tidalcycles://authority/tidalcycles');
+    postTab = postWindowProvider;
+    postUri = vscode.Uri.parse(`${postUriScheme}://authority/tidalcycles`);
 
     vscode.workspace.onDidChangeTextDocument(function(evt) {
         var doc = evt.document;
-        if (postEditor && doc.uri.scheme == "tidalcycles") {
+        if (postEditor && doc.uri.scheme == postUriScheme) {
             var lastLine = doc.lineAt(doc.lineCount - 1);
             var range = new Range(lastLine.lineNumber, lastLine.text.length - 1, lastLine.lineNumber, lastLine.text.length - 1);
             postEditor.revealRange(range);
@@ -25,28 +26,25 @@ function getEditor() {
     return vscode.window.activeTextEditor;
 }
 
-// function getGhciPath() {
-//     var ghciPath = vscode.workspace.getConfiguration('tidalcycles').get('ghciPath');
-//     return ghciPath || 'ghci';
-// }
-
 function start() {
-    ensurePostWindow();
+    ensurePostWindows();
     doSpawn();
     bootTidal();
 }
 
-function ensurePostWindow() {
-    if (!postWindow) {
-        postWindow = vscode.window.createOutputChannel('tidalcycles');
-        postWindow.show(true);
-    }
+function ensurePostWindows() {
+    ensurePostTab();
+    ensurePostChannel();
+}
+
+function ensurePostTab() {
+    if (!config.showOutputInEditorTab()) return;
 
     var editors = vscode.window.visibleTextEditors;
     var needToShowPostWindow = true;
     for (var i = 0; i < editors.length; i++) {
         var doc = editors[i].document;
-        if (doc.uri.scheme == 'tidalcycles') needToShowPostWindow = false;
+        if (doc.uri.scheme == postUriScheme) needToShowPostWindow = false;
     }
 
     if (needToShowPostWindow) {
@@ -59,8 +57,14 @@ function ensurePostWindow() {
     }
 }
 
-function doSpawn() {
+function ensurePostChannel() {
+    if (!postChannel && config.showOutputInConsoleChannel()) {
+        postChannel = vscode.window.createOutputChannel(postUriScheme);
+        postChannel.show(true);
+    }
+}
 
+function doSpawn() {
     repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
     repl.stderr.on('data', (data) => {
         console.error(data.toString('utf8'));
@@ -86,9 +90,6 @@ function eval(isMultiline) {
 }
 
 function feedback(range) {
-
-    // var feedbackColor = vscode.workspace.getConfiguration('tidalcycles').get('feedbackColor');
-    // feedbackColor = feedbackColor || 'rgba(100,250,100,0.25)';
 
     var flashDecorationType = vscode.window.createTextEditorDecorationType({
         backgroundColor: config.feedbackColor()
@@ -119,13 +120,13 @@ function tidalSendLine(command) {
 }
 
 function log(message) {
-    postWindow.append(`${message}\n`);
+    postChannel.append(`${message}\n`);
 }
 
 function post(message) {
-    ensurePostWindow();
-    postWindow.append(`${message} `);
-    postWindowPane.update(postUri, message);
+    ensurePostWindows();
+    if (postChannel) postChannel.append(`${message} `);
+    postTab.update(postUri, message);
 }
 
 function bootTidal() {
