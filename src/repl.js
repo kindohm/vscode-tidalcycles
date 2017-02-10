@@ -8,7 +8,16 @@ var repl, postWindow, postWindowPane, postUri, postEditor;
 
 function init(postWindowProvider) {
     postWindowPane = postWindowProvider;
-    postUri = vscode.Uri.parse('tidalcycles://authority/post/window/thing');
+    postUri = vscode.Uri.parse('tidalcycles://authority/tidalcycles');
+
+    vscode.workspace.onDidChangeTextDocument(function(evt) {
+        var doc = evt.document;
+        if (postEditor && doc.uri.scheme == "tidalcycles") {
+            var lastLine = doc.lineAt(doc.lineCount - 1);
+            var range = new Range(lastLine.lineNumber, lastLine.text.length - 1, lastLine.lineNumber, lastLine.text.length - 1);
+            postEditor.revealRange(range);
+        }
+    });
 }
 
 function getEditor() {
@@ -21,31 +30,32 @@ function getGhciPath() {
 }
 
 function start() {
-    showPostWindow();
+    ensurePostWindow();
     doSpawn();
     bootTidal();
 }
 
-function showPostWindow() {
-    postWindow = vscode.window.createOutputChannel('tidalcycles');
-    postWindow.show();
+function ensurePostWindow() {
+    if (!postWindow) {
+        postWindow = vscode.window.createOutputChannel('tidalcycles');
+        postWindow.show(true);
+    }
 
-    vscode.workspace.openTextDocument(postUri)
-        .then(function(doc) {
-            return vscode.window.showTextDocument(doc, vscode.ViewColumn.Two);
-        }).then(function(editor) {
-            postEditor = editor;
-        });
+    var editors = vscode.window.visibleTextEditors;
+    var needToShowPostWindow = true;
+    for (var i = 0; i < editors.length; i++) {
+        var doc = editors[i].document;
+        if (doc.uri.scheme == 'tidalcycles') needToShowPostWindow = false;
+    }
 
-
-    vscode.workspace.onDidChangeTextDocument(function(evt) {
-        var doc = evt.document;
-        if (postEditor && doc.uri.scheme == "tidalcycles") {
-            var lastLine = doc.lineAt(doc.lineCount - 1);
-            var range = new Range(lastLine.lineNumber, lastLine.text.length - 1, lastLine.lineNumber, lastLine.text.length - 1);
-            postEditor.revealRange(range);
-        }
-    });
+    if (needToShowPostWindow) {
+        vscode.workspace.openTextDocument(postUri)
+            .then(function(doc) {
+                return vscode.window.showTextDocument(doc, vscode.ViewColumn.Two, true);
+            }).then(function(editor) {
+                postEditor = editor;
+            });
+    }
 }
 
 function doSpawn() {
@@ -114,6 +124,7 @@ function log(message) {
 }
 
 function post(message) {
+    ensurePostWindow();
     postWindow.append(`${message} `);
     postWindowPane.update(postUri, message);
 }
