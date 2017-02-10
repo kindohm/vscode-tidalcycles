@@ -21,11 +21,13 @@ function bootTidalPath() {
 exports.bootTidalPath = bootTidalPath;
 
 function showOutputInEditorTab() {
+    if (!getConfiguration(configSection).has('showOutputInEditorTab')) return true;
     return getConfiguration(configSection).get('showOutputInEditorTab');
 }
 exports.showOutputInEditorTab = showOutputInEditorTab;
 
 function showOutputInConsoleChannel() {
+    if (!getConfiguration(configSection).has('showOutputInConsoleChannel')) return false;
     return getConfiguration(configSection).get('showOutputInConsoleChannel');
 }
 exports.showOutputInConsoleChannel = showOutputInConsoleChannel;
