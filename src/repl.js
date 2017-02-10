@@ -67,8 +67,9 @@ function ensurePostChannel() {
 function doSpawn() {
     repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
     repl.stderr.on('data', (data) => {
-        console.error(data.toString('utf8'));
-        post(data.toString('utf8'));
+        var msg = data.toString('utf8');
+        console.error(msg);
+        post(msg);
     });
     repl.stdout.on('data', (data) => post(data.toString('utf8')));
 }
