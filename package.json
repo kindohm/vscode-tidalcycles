@@ -2,8 +2,9 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.0.1",
-    "publisher": "mhodnick",
+    "version": "0.1.0",
+    "publisher": "kindohm",
+    "repository": "https://github.com/kindohm/vscode-tidalcycles",
     "engines": {
         "vscode": "^1.5.0"
     },
@@ -21,25 +22,31 @@
     "main": "./src/tidal",
     "contributes": {
         "commands": [{
-            "command": "tidal.eval",
-            "title": "Tidal Eval"
-        }, {
-            "command": "tidal.evalMulti",
-            "title": "Tidal Eval Multiline"
-        }, {
-            "command": "tidal.hush",
-            "title": "Tidal Hush"
-        }],
+                "command": "tidal.eval",
+                "title": "Tidal Eval"
+            },
+            {
+                "command": "tidal.evalMulti",
+                "title": "Tidal Eval Multiline"
+            },
+            {
+                "command": "tidal.hush",
+                "title": "Tidal Hush"
+            }
+        ],
         "keybindings": [{
-            "command": "tidal.eval",
-            "key": "Shift+Enter"
-        }, {
-            "command": "tidal.evalMulti",
-            "key": "Ctrl+Enter"
-        }, {
-            "command": "tidal.hush",
-            "key": "Ctrl+Alt+H"
-        }]
+                "command": "tidal.eval",
+                "key": "Shift+Enter"
+            },
+            {
+                "command": "tidal.evalMulti",
+                "key": "Ctrl+Enter"
+            },
+            {
+                "command": "tidal.hush",
+                "key": "Ctrl+Alt+H"
+            }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
