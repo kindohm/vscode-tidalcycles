@@ -2,17 +2,14 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "publisher": "kindohm",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
     "engines": {
         "vscode": "^1.5.0"
     },
     "categories": [
-        "Other",
-        "Music",
-        "Livecoding",
-        "Algorave"
+        "Other"
     ],
     "activationEvents": [
         "onCommand:tidal.eval",
