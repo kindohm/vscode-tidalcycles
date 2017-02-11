@@ -15,7 +15,8 @@
     ],
     "activationEvents": [
         "onCommand:tidal.eval",
-        "onCommand:tidal.evalMulti"
+        "onCommand:tidal.evalMulti",
+        "onCommand:tidal.hush"
     ],
     "main": "./src/tidal",
     "contributes": {
@@ -25,6 +26,9 @@
         }, {
             "command": "tidal.evalMulti",
             "title": "Tidal Eval Multiline"
+        }, {
+            "command": "tidal.hush",
+            "title": "Tidal Hush"
         }],
         "keybindings": [{
             "command": "tidal.eval",
@@ -32,6 +36,9 @@
         }, {
             "command": "tidal.evalMulti",
             "key": "Ctrl+Enter"
+        }, {
+            "command": "tidal.hush",
+            "key": "Ctrl+Alt+H"
         }]
     },
     "scripts": {

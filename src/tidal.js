@@ -17,7 +17,11 @@ function activate(context) {
         repl.eval(true);
     });
 
-    context.subscriptions.push(evalSingle, evalMulti, registration);
+    var hush = vscode.commands.registerCommand('tidal.hush', function() {
+        repl.hush();
+    });
+
+    context.subscriptions.push(evalSingle, evalMulti, hush, registration);
 }
 exports.activate = activate;
 

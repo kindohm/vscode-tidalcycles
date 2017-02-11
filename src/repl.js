@@ -96,6 +96,15 @@ function editorIsTidal() {
     return result;
 }
 
+function hush() {
+    if (!editorIsTidal()) return Promise.resolve();
+    return ensureStart()
+        .then(() => {
+            tidalSendExpression('hush');
+            post('hush');
+        });
+}
+
 function eval(isMultiline) {
     if (!editorIsTidal()) return Promise.resolve();
 
@@ -212,3 +221,4 @@ function bootDefault() {
 
 exports.eval = eval;
 exports.init = init;
+exports.hush = hush;
