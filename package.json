@@ -2,7 +2,7 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "publisher": "kindohm",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
     "engines": {
