@@ -2,7 +2,7 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "publisher": "kindohm",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
     "engines": {
@@ -18,7 +18,8 @@
     ],
     "main": "./src/tidal",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "tidal.eval",
                 "title": "Tidal Eval"
             },
@@ -31,7 +32,8 @@
                 "title": "Tidal Hush"
             }
         ],
-        "keybindings": [{
+        "keybindings": [
+            {
                 "command": "tidal.eval",
                 "key": "Shift+Enter"
             },
