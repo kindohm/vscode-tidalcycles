@@ -4,7 +4,7 @@
     "description": "TidalCycles support in VSCode",
     "version": "0.3.2",
     "publisher": "kindohm",
-    "icon": "./images/icon128.png",
+    "icon": "images/icon128.png",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
     "engines": {
         "vscode": "^1.5.0"
