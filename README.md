@@ -5,11 +5,11 @@ TidalCycles at [TidalCycles](https://tidalcycles.org).
 
 ## Features
 
-This VSCode extension for TidalCycles utilizes the same basic 
-commands and keybindings as the popular Atom package:
+This VSCode extension for TidalCycles is inspired by the commands from the popular Atom package:
 
 - `Shift+Enter` to evalulate a single line
-- `Cmd+Enter` to evaluate multiple lines
+- `Ctrl+Enter` to evaluate multiple lines
+- `Ctrl+Alt+H` to hush
 
 ## Requirements
 
@@ -23,9 +23,23 @@ TidalCycles and SuperDirt at [TidalCycles](https://tidalcycles.org).
 * `tidalcycles.ghci` - path to `ghci.exe`
 * `tidalcycles.feedbackColor` - the color to use for the "eval flash", 
     in the format `rgba([red],[green],[blue],[opacity])` (e.g. `rgba(100,200,100,0.25)`).
+* `tidalcycles.bootTidalPath` - path to a file that contains line-by-line commands to boot the TidalCycles Haskell package.
+* `tidalcycles.showOutputInEditorTab` - if `true`, will show REPL output in a new editor tab.
+* `tidalcycles.showOutputInConsoleChannel` - if `true`, will show REPL output in a console window. *NOTE: VSCode does not yet support auto-scrolling in console channels, so this feature doesn't work perfectly yet.*
+
+These settings can all be specified in the VS Code settings file like so:
+
+```
+"tidalcycles": {
+        "feedbackColor": "rgba(100,250,100,0.5)",
+        "ghciPath": "c:\\path\\to\\ghci.exe",
+        "showOutputInConsoleChannel": false,
+        "showOutputInEditorTab": true,
+        "tidalBootPath": "c:\\path\\to\\file.hs"
+    }
+```
 
 ## Known Issues
 
-- The `Eval and Copy` and `Eval Multi Line and Copy` commands from the
-    Atom package are not supported.
+- The `Eval and Copy` and `Eval Multi Line and Copy` commands from the Atom package are not supported.
 
