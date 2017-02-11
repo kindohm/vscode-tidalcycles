@@ -26,52 +26,67 @@ function getEditor() {
     return vscode.window.activeTextEditor;
 }
 
-function start() {
-    ensurePostWindows();
-    doSpawn();
-    bootTidal();
+function ensureStart() {
+
+    if (repl) return Promise.resolve();
+
+    return ensurePostWindows()
+        .then(doSpawn)
+        .then(bootTidal);
 }
 
 function ensurePostWindows() {
-    ensurePostTab();
-    ensurePostChannel();
+    return ensurePostTab()
+        .then(ensurePostChannel);
 }
 
 function ensurePostTab() {
-    if (!config.showOutputInEditorTab()) return;
+    return new Promise(function(resolve, reject) {
+        if (!config.showOutputInEditorTab()) return resolve();
 
-    var editors = vscode.window.visibleTextEditors;
-    var needToShowPostWindow = true;
-    for (var i = 0; i < editors.length; i++) {
-        var doc = editors[i].document;
-        if (doc.uri.scheme == postUriScheme) needToShowPostWindow = false;
-    }
+        var editors = vscode.window.visibleTextEditors;
+        var needToShowPostWindow = true;
+        for (var i = 0; i < editors.length; i++) {
+            var doc = editors[i].document;
+            if (doc.uri.scheme == postUriScheme) needToShowPostWindow = false;
+        }
 
-    if (needToShowPostWindow) {
-        vscode.workspace.openTextDocument(postUri)
-            .then(function(doc) {
-                return vscode.window.showTextDocument(doc, vscode.ViewColumn.Two, true);
-            }).then(function(editor) {
-                postEditor = editor;
-            });
-    }
+        if (needToShowPostWindow) {
+            return vscode.workspace.openTextDocument(postUri)
+                .then(function(doc) {
+                    return vscode.window.showTextDocument(doc, vscode.ViewColumn.Two, true);
+                }).then(function(editor) {
+                    postEditor = editor;
+                    resolve();
+                });
+        } else {
+            resolve();
+        }
+    });
+
 }
 
 function ensurePostChannel() {
-    if (!postChannel && config.showOutputInConsoleChannel()) {
-        postChannel = vscode.window.createOutputChannel(postUriScheme);
-        postChannel.show(true);
-    }
+    return new Promise(function(resolve, reject) {
+        if (!postChannel && config.showOutputInConsoleChannel()) {
+            postChannel = vscode.window.createOutputChannel(postUriScheme);
+            postChannel.show(true);
+        }
+        resolve();
+    });
 }
 
 function doSpawn() {
-    repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
-    repl.stderr.on('data', (data) => {
-        var msg = data.toString('utf8');
-        console.error(msg);
-        post(msg);
+    return new Promise((resolve, reject) => {
+        repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
+        repl.stderr.on('data', (data) => {
+            var msg = data.toString('utf8');
+            console.error(msg);
+            post(msg);
+        });
+        repl.stdout.on('data', (data) => post(data.toString('utf8')));
+        resolve();
     });
-    repl.stdout.on('data', (data) => post(data.toString('utf8')));
 }
 
 function editorIsTidal() {
@@ -82,12 +97,14 @@ function editorIsTidal() {
 }
 
 function eval(isMultiline) {
-    if (!editorIsTidal()) return;
-    if (!repl) start();
+    if (!editorIsTidal()) return Promise.resolve();
 
-    var block = expression.getBlock(isMultiline);
-    tidalSendExpression(block.expression);
-    feedback(block.range);
+    return ensureStart()
+        .then(() => {
+            var block = expression.getBlock(isMultiline);
+            tidalSendExpression(block.expression);
+            feedback(block.range);
+        });
 }
 
 function feedback(range) {
@@ -125,34 +142,39 @@ function log(message) {
 }
 
 function post(message) {
-    ensurePostWindows();
-    if (postChannel) postChannel.append(`${message} `);
-    postTab.update(postUri, message);
+    return ensurePostWindows()
+        .then(() => {
+            if (postChannel) postChannel.append(`${message} `);
+            postTab.update(postUri, message);
+        });
 }
 
 function bootTidal() {
+    return new Promise((resolve, reject) => {
 
-    // use a custom boot file if the user has specified it.
-    // NOTE: if the custom boot file does not exist, Tidal will
-    // not get booted. Unsure of a way to check if the file exists first
-    // before opening. openTextDocument() does not return an error. not
-    // sure how to cleanly check for this.
-    var bootTidalPath = config.bootTidalPath();
+        // use a custom boot file if the user has specified it.
+        // NOTE: if the custom boot file does not exist, Tidal will
+        // not get booted. Unsure of a way to check if the file exists first
+        // before opening. openTextDocument() does not return an error. not
+        // sure how to cleanly check for this.
+        var bootTidalPath = config.bootTidalPath();
 
-    if (bootTidalPath) {
-        var uri = vscode.Uri.parse('file:///' + bootTidalPath);
-        vscode.workspace.openTextDocument(uri)
-            .then(doc => {
-                // only gets called if file was found.
-                var commands = doc.getText().split('\n');
-                for (var i = 0; i < commands.length; i++) {
-                    tidalSendLine(commands[i]);
-                }
-            });
-        return;
-    }
-
-    bootDefault();
+        if (bootTidalPath) {
+            var uri = vscode.Uri.parse('file:///' + bootTidalPath);
+            return vscode.workspace.openTextDocument(uri)
+                .then(doc => {
+                    // only gets called if file was found.
+                    var commands = doc.getText().split('\n');
+                    for (var i = 0; i < commands.length; i++) {
+                        tidalSendLine(commands[i]);
+                    }
+                    resolve();
+                });
+        } else {
+            bootDefault();
+            resolve();
+        }
+    });
 }
 
 function bootDefault() {
