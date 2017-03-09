@@ -11,6 +11,13 @@ This VSCode extension for TidalCycles is inspired by the commands from the popul
 - `Ctrl+Enter` to evaluate multiple lines
 - `Ctrl+Alt+H` to hush
 
+### A "flood" function
+
+A custom `flood` function is defined in the bootup of this package. Use `flood` to fill the
+post window with some text:
+
+`flood "hello from tidal "`
+
 ## Requirements
 
 You will need to have TidalCycles (a Haskell package) installed before
