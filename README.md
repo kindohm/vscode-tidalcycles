@@ -49,4 +49,5 @@ These settings can all be specified in the VS Code settings file like so:
 ## Known Issues
 
 - The `Eval and Copy` and `Eval Multi Line and Copy` commands from the Atom package are not supported.
-
+- VS Code output channel windows do not support auto-scrolling. If you enable the `showOutputInConsoleChannel`
+    setting, that output will not auto-scroll.
