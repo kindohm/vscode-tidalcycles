@@ -153,8 +153,13 @@ function log(message) {
 function post(message) {
     return ensurePostWindows()
         .then(() => {
-            if (postChannel) postChannel.append(`${message} `);
-            postTab.update(postUri, message);
+            if (postChannel) {
+                postChannel.append(`${message} `);
+            }
+
+            if (postEditor){
+                postTab.update(postUri, message);
+            }
         });
 }
 
@@ -215,6 +220,10 @@ function bootDefault() {
     tidalSendLine('let bps x = cps (x/2)');
     tidalSendLine('let hush = mapM_ ($ silence) [d1,d2,d3,d4,d5,d6,d7,d8,d9,c1,c2,c3,c4,c5,c6,c7,c8,c9]');
     tidalSendLine('let solo = (>>) hush');
+
+    tidalSendLine('let replicator text1 = [putStr (text1) | x <- replicate 3000 text1]');
+    tidalSendLine('let flood text2 = sequence_(replicator text2)');
+
 
     tidalSendLine(':set prompt "tidal> "');
 }
