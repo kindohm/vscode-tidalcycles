@@ -18,7 +18,22 @@ post window with some text:
 
 `flood "hello from tidal "`
 
-## Requirements
+## Syntax Highlighting
+
+In order to get syntax highlighting in `.tidal` files you must do
+two things:
+
+- Install the [Haskell Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=justusadam.language-haskell) extension
+- Associate `.tidal` files to the Haskell language by adding the following 
+settings in `settings.json`:
+
+```
+"files.associations": {
+    "*.tidal": "haskell"
+}
+```
+
+## Prerequisites
 
 You will need to have TidalCycles (a Haskell package) installed before
 using this extension. If you want to produce sound, you'll also
