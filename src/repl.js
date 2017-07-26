@@ -8,9 +8,6 @@ const postUriScheme = "tidalcycles";
 
 let repl, postChannel;
 
-function init() {
-}
-
 function getEditor() {
     return vscode.window.activeTextEditor;
 }
@@ -29,7 +26,7 @@ function ensurePostWindows() {
 }
 
 function ensurePostChannel() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         if (!postChannel && config.showOutputInConsoleChannel()) {
             postChannel = vscode.window.createOutputChannel(postUriScheme);
             postChannel.show(true);
@@ -42,7 +39,7 @@ function doSpawn() {
     return new Promise((resolve, reject) => {
         repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
         repl.stderr.on('data', (data) => {
-            var msg = data.toString('utf8');
+            const msg = data.toString('utf8');
             console.error(msg);
             post(msg);
         });
@@ -52,9 +49,9 @@ function doSpawn() {
 }
 
 function editorIsTidal() {
-    var editor = getEditor();
-    var fileName = editor.document.fileName;
-    var result = fileName.endsWith('.tidal');
+    const editor = getEditor();
+    const fileName = editor.document.fileName;
+    const result = fileName.endsWith('.tidal');
     return result;
 }
 
@@ -72,7 +69,7 @@ function eval(isMultiline) {
 
     return ensureStart()
         .then(() => {
-            var block = expression.getBlock(isMultiline);
+            const block = expression.getBlock(isMultiline);
             tidalSendExpression(block.expression);
             feedback(block.range);
         });
@@ -80,20 +77,20 @@ function eval(isMultiline) {
 
 function feedback(range) {
 
-    var flashDecorationType = vscode.window.createTextEditorDecorationType({
+    const flashDecorationType = vscode.window.createTextEditorDecorationType({
         backgroundColor: config.feedbackColor()
     });
 
     getEditor().setDecorations(flashDecorationType, [range]);
-    setTimeout(function() {
+    setTimeout(function () {
         flashDecorationType.dispose();
     }, 250);
 }
 
 function tidalSendExpression(expression) {
     tidalSendLine(':{');
-    var splits = expression.split('\n');
-    for (var i = 0; i < splits.length; i++) {
+    const splits = expression.split('\n');
+    for (let i = 0; i < splits.length; i++) {
         tidalSendLine(splits[i]);
     }
     tidalSendLine(':}');
@@ -113,12 +110,9 @@ function log(message) {
 }
 
 function post(message) {
-    return ensurePostWindows()
-        .then(() => {
-            if (postChannel) {
-                postChannel.append(`${message} `);
-            }
-        });
+    if (postChannel) {
+        postChannel.append(`${message} `);
+    }
 }
 
 function bootTidal() {
@@ -132,12 +126,12 @@ function bootTidal() {
         var bootTidalPath = config.bootTidalPath();
 
         if (bootTidalPath) {
-            var uri = vscode.Uri.parse('file:///' + bootTidalPath);
+            const uri = vscode.Uri.parse('file:///' + bootTidalPath);
             return vscode.workspace.openTextDocument(uri)
                 .then(doc => {
                     // only gets called if file was found.
-                    var commands = doc.getText().split('\n');
-                    for (var i = 0; i < commands.length; i++) {
+                    const commands = doc.getText().split('\n');
+                    for (let i = 0; i < commands.length; i++) {
                         tidalSendLine(commands[i]);
                     }
                     resolve();
@@ -187,5 +181,4 @@ function bootDefault() {
 }
 
 exports.eval = eval;
-exports.init = init;
 exports.hush = hush;

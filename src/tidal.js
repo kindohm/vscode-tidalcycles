@@ -2,8 +2,6 @@ var vscode = require('vscode');
 var repl = require('./repl');
 
 function activate(context) {
-    repl.init();
-
     var evalSingle = vscode.commands.registerCommand('tidal.eval', function() {
         repl.eval(false);
     });
