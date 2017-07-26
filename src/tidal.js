@@ -1,13 +1,8 @@
 var vscode = require('vscode');
 var repl = require('./repl');
-var PostWindowContentProvider = require('./postWindow').PostWindowContentProvider;
 
 function activate(context) {
-    var registration;
-    var postWindowProvider = new PostWindowContentProvider();
-    registration = vscode.workspace.registerTextDocumentContentProvider('tidalcycles', postWindowProvider);
-
-    repl.init(postWindowProvider);
+    repl.init();
 
     var evalSingle = vscode.commands.registerCommand('tidal.eval', function() {
         repl.eval(false);
@@ -21,7 +16,7 @@ function activate(context) {
         repl.hush();
     });
 
-    context.subscriptions.push(evalSingle, evalMulti, hush, registration);
+    context.subscriptions.push(evalSingle, evalMulti, hush);
 }
 exports.activate = activate;
 

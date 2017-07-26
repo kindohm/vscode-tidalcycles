@@ -46,7 +46,6 @@ TidalCycles and SuperDirt at [TidalCycles](https://tidalcycles.org).
 * `tidalcycles.feedbackColor` - the color to use for the "eval flash", 
     in the format `rgba([red],[green],[blue],[opacity])` (e.g. `rgba(100,200,100,0.25)`).
 * `tidalcycles.bootTidalPath` - path to a file that contains line-by-line commands to boot the TidalCycles Haskell package.
-* `tidalcycles.showOutputInEditorTab` - if `true`, will show REPL output in a new editor tab.
 * `tidalcycles.showOutputInConsoleChannel` - if `true`, will show REPL output in a console window. *NOTE: VSCode does not yet support auto-scrolling in console channels, so this feature doesn't work perfectly yet.*
 
 These settings can all be specified in the VS Code settings file like so:
@@ -56,7 +55,6 @@ These settings can all be specified in the VS Code settings file like so:
         "feedbackColor": "rgba(100,250,100,0.5)",
         "ghciPath": "c:\\path\\to\\ghci.exe",
         "showOutputInConsoleChannel": false,
-        "showOutputInEditorTab": true,
         "tidalBootPath": "c:\\path\\to\\file.hs"
     }
 ```
@@ -64,5 +62,3 @@ These settings can all be specified in the VS Code settings file like so:
 ## Known Issues
 
 - The `Eval and Copy` and `Eval Multi Line and Copy` commands from the Atom package are not supported.
-- VS Code output channel windows do not support auto-scrolling. If you enable the `showOutputInConsoleChannel`
-    setting, that output will not auto-scroll.

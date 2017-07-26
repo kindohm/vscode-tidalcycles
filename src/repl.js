@@ -1,25 +1,14 @@
-var vscode = require('vscode');
-var Selection = vscode.Selection;
-var procspawn = require('child_process').spawn;
-var Range = vscode.Range;
-var expression = require('./expression');
-var config = require('./config');
-var postUriScheme = "tidalcycles";
+const vscode = require('vscode');
+const Selection = vscode.Selection;
+const procspawn = require('child_process').spawn;
+const Range = vscode.Range;
+const expression = require('./expression');
+const config = require('./config');
+const postUriScheme = "tidalcycles";
 
-var repl, postChannel, postTab, postUri, postEditor;
+let repl, postChannel;
 
-function init(postWindowProvider) {
-    postTab = postWindowProvider;
-    postUri = vscode.Uri.parse(`${postUriScheme}://authority/tidalcycles`);
-
-    vscode.workspace.onDidChangeTextDocument(function(evt) {
-        var doc = evt.document;
-        if (postEditor && doc.uri.scheme == postUriScheme) {
-            var lastLine = doc.lineAt(doc.lineCount - 1);
-            var range = new Range(lastLine.lineNumber, lastLine.text.length - 1, lastLine.lineNumber, lastLine.text.length - 1);
-            postEditor.revealRange(range);
-        }
-    });
+function init() {
 }
 
 function getEditor() {
@@ -36,34 +25,7 @@ function ensureStart() {
 }
 
 function ensurePostWindows() {
-    return ensurePostTab()
-        .then(ensurePostChannel);
-}
-
-function ensurePostTab() {
-    return new Promise(function(resolve, reject) {
-        if (!config.showOutputInEditorTab()) return resolve();
-
-        var editors = vscode.window.visibleTextEditors;
-        var needToShowPostWindow = true;
-        for (var i = 0; i < editors.length; i++) {
-            var doc = editors[i].document;
-            if (doc.uri.scheme == postUriScheme) needToShowPostWindow = false;
-        }
-
-        if (needToShowPostWindow) {
-            return vscode.workspace.openTextDocument(postUri)
-                .then(function(doc) {
-                    return vscode.window.showTextDocument(doc, vscode.ViewColumn.Two, true);
-                }).then(function(editor) {
-                    postEditor = editor;
-                    resolve();
-                });
-        } else {
-            resolve();
-        }
-    });
-
+    return ensurePostChannel();
 }
 
 function ensurePostChannel() {
@@ -155,10 +117,6 @@ function post(message) {
         .then(() => {
             if (postChannel) {
                 postChannel.append(`${message} `);
-            }
-
-            if (postEditor){
-                postTab.update(postUri, message);
             }
         });
 }
