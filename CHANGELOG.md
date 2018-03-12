@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "tidalcycles" extension will be documented in this file.
 
+## "0.5.0"
+- added setting for using a `BootTidal.hs` file in the local directory
+
 ## "0.4.1"
 - Code cleanup.
 
