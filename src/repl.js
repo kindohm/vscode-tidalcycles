@@ -123,10 +123,21 @@ function bootTidal() {
         // not get booted. Unsure of a way to check if the file exists first
         // before opening. openTextDocument() does not return an error. not
         // sure how to cleanly check for this.
-        var bootTidalPath = config.bootTidalPath();
 
-        if (bootTidalPath) {
-            const uri = vscode.Uri.parse('file:///' + bootTidalPath);
+        const bootTidalPath = config.bootTidalPath();
+        const useBootFileInCurrentDirectory = config.useBootFileInCurrentDirectory();
+        let uri;
+
+        if (useBootFileInCurrentDirectory) {
+            const folders = vscode.workspace.workspaceFolders;
+            const dir = folders[0].uri.fsPath;
+            uri = vscode.Uri.parse(`${dir}/BootTidal.hs`);
+        } else if (bootTidalPath) {
+            uri = vscode.Uri.parse('file:///' + bootTidalPath);
+        }
+
+        if (uri) {
+            console.log('Using Tidal boot file on disk at ' + uri.fsPath);
             return vscode.workspace.openTextDocument(uri)
                 .then(doc => {
                     // only gets called if file was found.
@@ -136,10 +147,12 @@ function bootTidal() {
                     }
                     resolve();
                 });
-        } else {
-            bootDefault();
-            resolve();
         }
+
+        console.log('Using default Tidal package boot.');
+        bootDefault();
+        resolve();
+
     });
 }
 
@@ -175,7 +188,6 @@ function bootDefault() {
 
     tidalSendLine('let replicator text1 = [putStr (text1) | x <- replicate 3000 text1]');
     tidalSendLine('let flood text2 = sequence_(replicator text2)');
-
 
     tidalSendLine(':set prompt "tidal> "');
 }

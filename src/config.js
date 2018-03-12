@@ -20,6 +20,12 @@ function bootTidalPath() {
 }
 exports.bootTidalPath = bootTidalPath;
 
+function useBootFileInCurrentDirectory() {
+    var value = getConfiguration(configSection).get('useBootFileInCurrentDirectory');
+    return value == true;
+}
+exports.useBootFileInCurrentDirectory = useBootFileInCurrentDirectory;
+
 function showOutputInConsoleChannel() {
     if (!getConfiguration(configSection).has('showOutputInConsoleChannel')) return false;
     return getConfiguration(configSection).get('showOutputInConsoleChannel');
