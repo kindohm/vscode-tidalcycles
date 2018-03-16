@@ -18,7 +18,10 @@ function ensureStart() {
 
     return ensurePostWindows()
         .then(doSpawn)
-        .then(bootTidal);
+        .then(bootTidal)
+        .catch(err => {
+            post("error: " + err.message);
+        });
 }
 
 function ensurePostWindows() {
@@ -131,13 +134,13 @@ function bootTidal() {
         if (useBootFileInCurrentDirectory) {
             const folders = vscode.workspace.workspaceFolders;
             const dir = folders[0].uri.fsPath;
-            uri = vscode.Uri.parse(`${dir}/BootTidal.hs`);
+            uri = vscode.Uri.parse(`file:///${dir}/BootTidal.hs`);
         } else if (bootTidalPath) {
             uri = vscode.Uri.parse('file:///' + bootTidalPath);
         }
 
         if (uri) {
-            console.log('Using Tidal boot file on disk at ' + uri.fsPath);
+            post('Using Tidal boot file on disk at ' + uri.fsPath);
             return vscode.workspace.openTextDocument(uri)
                 .then(doc => {
                     // only gets called if file was found.
@@ -149,7 +152,7 @@ function bootTidal() {
                 });
         }
 
-        console.log('Using default Tidal package boot.');
+        post('Using default Tidal package boot.');
         bootDefault();
         resolve();
 
