@@ -6,7 +6,7 @@ const expression = require('./expression');
 const config = require('./config');
 const postUriScheme = "tidalcycles";
 
-let repl, postChannel;
+let repl, postChannel, booted = false;
 
 function getEditor() {
     return vscode.window.activeTextEditor;
@@ -14,13 +14,23 @@ function getEditor() {
 
 function ensureStart() {
 
-    if (repl) return Promise.resolve();
+    // everything is booted up already.
+    if (repl && booted) return Promise.resolve();
 
+    // GHCI repl started, but Tidal was never started.
+    if (repl && !booted) {
+        return bootTidal()
+        .catch(err => {
+            post(`error: ${err.message}`);
+        });
+    }
+
+    // nothing has started.
     return ensurePostWindows()
         .then(doSpawn)
         .then(bootTidal)
         .catch(err => {
-            post("error: " + err.message);
+            post(`error: ${err.message}`);
         });
 }
 
@@ -121,11 +131,9 @@ function post(message) {
 function bootTidal() {
     return new Promise((resolve, reject) => {
 
-        // use a custom boot file if the user has specified it.
-        // NOTE: if the custom boot file does not exist, Tidal will
-        // not get booted. Unsure of a way to check if the file exists first
-        // before opening. openTextDocument() does not return an error. not
-        // sure how to cleanly check for this.
+        // Use a custom boot file if the user has specified it.
+        // The promise is rejected if the file cannot be found. User can
+        // re-configure their settings and retry as `booted = false` still. 
 
         const bootTidalPath = config.bootTidalPath();
         const useBootFileInCurrentDirectory = config.useBootFileInCurrentDirectory();
@@ -133,6 +141,23 @@ function bootTidal() {
 
         if (useBootFileInCurrentDirectory) {
             const folders = vscode.workspace.workspaceFolders;
+
+            // user has configured to use a BootTidal.hs file in the current VS Code folder,
+            // but there is no folder opened.
+            if (!folders){
+                const message = 'You must open a folder or workspace in order to use the Tidal useBootFileInCurrentDirectory setting.';
+                post(message);
+                vscode.window.showErrorMessage(message)
+                return reject();
+            }
+
+            if (folders && folders.length === 0){
+                const message = 'You must have at least one folder in your workspace in order to use the Tidal useBootFileInCurrentDirectory setting.';
+                post(message);
+                vscode.window.showErrorMessage(message)
+                return reject();
+            }
+
             const dir = folders[0].uri.fsPath;
             uri = vscode.Uri.parse(`file:///${dir}/BootTidal.hs`);
         } else if (bootTidalPath) {
@@ -141,19 +166,27 @@ function bootTidal() {
 
         if (uri) {
             post('Using Tidal boot file on disk at ' + uri.fsPath);
-            return vscode.workspace.openTextDocument(uri)
-                .then(doc => {
-                    // only gets called if file was found.
-                    const commands = doc.getText().split('\n');
-                    for (let i = 0; i < commands.length; i++) {
-                        tidalSendLine(commands[i]);
-                    }
-                    resolve();
-                });
+            const p = vscode.workspace.openTextDocument(uri);
+
+            return p.then(doc => {
+                // only gets called if file was found.
+                const commands = doc.getText().split('\n');
+                for (let i = 0; i < commands.length; i++) {
+                    tidalSendLine(commands[i]);
+                }
+                booted = true;
+                resolve();
+            }, reason => {
+                const message = `Could not open boot file located at ${uri.fsPath}. User Settings: { bootTidalPath: ${bootTidalPath}, useBootFileInCurrentDirectory: ${useBootFileInCurrentDirectory} }.`;
+                post(message);
+                vscode.window.showErrorMessage(message);
+                reject();
+            });
         }
 
         post('Using default Tidal package boot.');
         bootDefault();
+        booted = true;
         resolve();
 
     });
