@@ -2,7 +2,7 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.5.5",
+    "version": "0.5.6",
     "publisher": "tidalcycles",
     "icon": "images/icon128.png",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
@@ -46,7 +46,38 @@
                 "command": "tidal.hush",
                 "key": "Ctrl+Alt+H"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "TidalCycles Configuration",
+            "properties": {
+                "tidalcycles.bootTidalPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The file system path to a file that contains Tidal bootup code."
+                },
+                "tidalcycles.feedbackColor": {
+                    "type": "string",
+                    "default": "rgba(100,250,100,0.3)",
+                    "description": "The highlight color to use when evaluating Tidal code."
+                },
+                "tidalcycles.ghciPath": {
+                    "type": "string",
+                    "default": "ghci",
+                    "description": "The path or command used to run ghci."
+                },
+                "tidalcycles.showOutputInConsoleChannel": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show Tidal output in a VS Code output panel."
+                },
+                "tidalcycles.useBootFileInCurrentDirectory": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies whether to use a BootTidal.hs file located in the current folder or first folder of the opened workspace."
+                }
+            }
+        }
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
@@ -59,36 +90,5 @@
         "eslint": "^3.6.0",
         "@types/node": "^6.0.40",
         "@types/mocha": "^2.2.32"
-    },
-    "configuration": {
-        "type": "object",
-        "title": "TidalCycles Configuration",
-        "properties": {
-            "tidalcycles.bootTidalPath": {
-                "type": "string",
-                "default": "",
-                "description": "The file system path to a file that contains Tidal bootup code."
-            },
-            "tidalcycles.feedbackColor": {
-                "type": "string",
-                "default": "rgba(100,250,100,0.3)",
-                "description": "The highlight color to use when evaluating Tidal code."
-            },
-            "tidalcycles.ghciPath": {
-                "type": "string",
-                "default": "ghci",
-                "description": "The path or command used to run ghci."
-            },
-            "tidalcycles.showOutputInConsoleChannel": {
-                "type": "boolean",
-                "default": true,
-                "description": "Show Tidal output in a VS Code output panel."
-            },
-            "tidalcycles.useBootFileInCurrentDirectory": {
-                "type": "boolean",
-                "default": false,
-                "description": "Specifies whether to use a BootTidal.hs file located in the current folder or first folder of the opened workspace."
-            }
-        }
     }
 }
