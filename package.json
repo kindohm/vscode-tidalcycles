@@ -2,7 +2,7 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.5.6",
+    "version": "0.5.7",
     "publisher": "tidalcycles",
     "icon": "images/icon128.png",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
@@ -65,6 +65,16 @@
                     "type": "string",
                     "default": "ghci",
                     "description": "The path or command used to run ghci."
+                },
+                "tidalcycles.showEvalCount": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show an incremented count of evaluations in the console output on each eval."
+                },
+                "tidalcycles.showGhciOutput": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Display the standard output from GHCI in the console."
                 },
                 "tidalcycles.showOutputInConsoleChannel": {
                     "type": "boolean",

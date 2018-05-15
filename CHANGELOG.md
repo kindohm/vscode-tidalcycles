@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "tidalcycles" extension will be documented in this file.
 
+## "0.5.7"
+- add config option to toggle GHCI output on/off in console
+- add config option to display incremented eval count in console
+
 ## "0.5.5"
 - add configuration setting details in package.json
 

@@ -6,7 +6,7 @@ const expression = require('./expression');
 const config = require('./config');
 const postUriScheme = "tidalcycles";
 
-let repl, postChannel, booted = false;
+let repl, postChannel, evalCount = 0, booted = false;
 
 function getEditor() {
     return vscode.window.activeTextEditor;
@@ -20,9 +20,9 @@ function ensureStart() {
     // GHCI repl started, but Tidal was never started.
     if (repl && !booted) {
         return bootTidal()
-        .catch(err => {
-            post(`error: ${err.message}`);
-        });
+            .catch(err => {
+                post(`error: ${err.message}`);
+            });
     }
 
     // nothing has started.
@@ -56,7 +56,9 @@ function doSpawn() {
             console.error(msg);
             post(msg);
         });
-        repl.stdout.on('data', (data) => post(data.toString('utf8')));
+        repl.stdout.on('data', (data) => {
+            if (config.showGhciOutput()) post(data.toString('utf8'));
+        });
         resolve();
     });
 }
@@ -83,6 +85,8 @@ function eval(isMultiline) {
     return ensureStart()
         .then(() => {
             const block = expression.getBlock(isMultiline);
+            evalCount++;
+            if (config.showEvalCount()) post(`evals: ${evalCount}`);
             tidalSendExpression(block.expression);
             feedback(block.range);
         });
@@ -144,14 +148,14 @@ function bootTidal() {
 
             // user has configured to use a BootTidal.hs file in the current VS Code folder,
             // but there is no folder opened.
-            if (!folders){
+            if (!folders) {
                 const message = 'You must open a folder or workspace in order to use the Tidal useBootFileInCurrentDirectory setting.';
                 post(message);
                 vscode.window.showErrorMessage(message)
                 return reject();
             }
 
-            if (folders && folders.length === 0){
+            if (folders && folders.length === 0) {
                 const message = 'You must have at least one folder in your workspace in order to use the Tidal useBootFileInCurrentDirectory setting.';
                 post(message);
                 vscode.window.showErrorMessage(message)

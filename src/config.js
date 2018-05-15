@@ -31,3 +31,16 @@ function showOutputInConsoleChannel() {
     return getConfiguration(configSection).get('showOutputInConsoleChannel');
 }
 exports.showOutputInConsoleChannel = showOutputInConsoleChannel;
+
+function showEvalCount() {
+    if (!getConfiguration(configSection).has('showEvalCount')) return false;
+    return getConfiguration(configSection).get('showEvalCount');
+}
+exports.showEvalCount = showEvalCount;
+
+function showGhciOutput() {
+    if (!getConfiguration(configSection).has('showGhciOutput')) return false;
+    return getConfiguration(configSection).get('showGhciOutput');
+}
+exports.showGhciOutput = showGhciOutput;
+
