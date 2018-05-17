@@ -1,5 +1,7 @@
 # Change Log
-All notable changes to the "tidalcycles" extension will be documented in this file.
+
+## "0.5.8"
+- added settings for outputting random messages in standard output, if desired.
 
 ## "0.5.7"
 - add config option to toggle GHCI output on/off in console

@@ -2,7 +2,7 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.5.7",
+    "version": "0.5.8",
     "publisher": "tidalcycles",
     "icon": "images/icon128.png",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
@@ -65,6 +65,16 @@
                     "type": "string",
                     "default": "ghci",
                     "description": "The path or command used to run ghci."
+                },
+                "tidalcycles.randomMessageProbability": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Probability between 0 and 1 of whether a random message will be shown per eval in the output."
+                },
+                "tidalcycles.randomMessages": {
+                    "type": "array",
+                    "default": [],
+                    "description": "An array of strings of random messages."
                 },
                 "tidalcycles.showEvalCount": {
                     "type": "boolean",

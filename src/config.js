@@ -2,45 +2,52 @@ var workspace = require('vscode').workspace;
 var getConfiguration = workspace.getConfiguration;
 var configSection = 'tidalcycles';
 
-function ghciPath() {
-    var value = getConfiguration(configSection).get('ghciPath');
-    return value || 'ghci';
-}
-exports.ghciPath = ghciPath;
-
-function feedbackColor() {
-    var value = getConfiguration(configSection).get('feedbackColor');
-    return value || 'rgba(100,250,100,0.3)';
-}
-exports.feedbackColor = feedbackColor;
-
-function bootTidalPath() {
+exports.bootTidalPath = () => {
     var value = getConfiguration(configSection).get('bootTidalPath');
     return value || undefined;
-}
-exports.bootTidalPath = bootTidalPath;
+};
 
-function useBootFileInCurrentDirectory() {
-    var value = getConfiguration(configSection).get('useBootFileInCurrentDirectory');
-    return value == true;
-}
-exports.useBootFileInCurrentDirectory = useBootFileInCurrentDirectory;
+exports.feedbackColor = () => {
+    var value = getConfiguration(configSection).get('feedbackColor');
+    return value || 'rgba(100,250,100,0.3)';
+};
 
-function showOutputInConsoleChannel() {
-    if (!getConfiguration(configSection).has('showOutputInConsoleChannel')) return false;
-    return getConfiguration(configSection).get('showOutputInConsoleChannel');
-}
-exports.showOutputInConsoleChannel = showOutputInConsoleChannel;
+exports.ghciPath = () => {
+    var value = getConfiguration(configSection).get('ghciPath');
+    return value || 'ghci';
+};
 
-function showEvalCount() {
+exports.randomMessages = () => {
+    if (!getConfiguration(configSection).has('randomMessages')) return [];
+    return getConfiguration(configSection).get('randomMessages');
+};
+
+exports.randomMessageProbability = () => {
+    if (!getConfiguration(configSection).has('randomMessageProbability')) return 0;
+    return getConfiguration(configSection).get('randomMessageProbability');
+};
+
+exports.showEvalCount = () => {
     if (!getConfiguration(configSection).has('showEvalCount')) return false;
     return getConfiguration(configSection).get('showEvalCount');
-}
-exports.showEvalCount = showEvalCount;
+};
 
-function showGhciOutput() {
+exports.evalCountPrefix = () => {
+    if (!getConfiguration(configSection).has('evalCountPrefix')) return 'evals: ';
+    return getConfiguration(configSection).get('evalCountPrefix');
+}
+
+exports.showGhciOutput = () => {
     if (!getConfiguration(configSection).has('showGhciOutput')) return false;
     return getConfiguration(configSection).get('showGhciOutput');
-}
-exports.showGhciOutput = showGhciOutput;
+};
 
+exports.showOutputInConsoleChannel = () => {
+    if (!getConfiguration(configSection).has('showOutputInConsoleChannel')) return false;
+    return getConfiguration(configSection).get('showOutputInConsoleChannel');
+};
+
+exports.useBootFileInCurrentDirectory = () => {
+    var value = getConfiguration(configSection).get('useBootFileInCurrentDirectory');
+    return value == true;
+};

@@ -85,11 +85,29 @@ function eval(isMultiline) {
     return ensureStart()
         .then(() => {
             const block = expression.getBlock(isMultiline);
-            evalCount++;
-            if (config.showEvalCount()) post(`evals: ${evalCount}`);
             tidalSendExpression(block.expression);
             feedback(block.range);
+            incrementEvalCount();
+            showRandomMessage();
         });
+}
+
+function incrementEvalCount() {
+    evalCount++;
+    if (config.showEvalCount()) post(`${config.evalCountPrefix()}${evalCount} `);
+}
+
+function showRandomMessage() {
+    const messages = config.randomMessages();
+    if (messages.length > 0 && config.randomMessageProbability() > Math.random()) {
+        post(`${messages[getRandomIntInclusive(0, messages.length - 1)]} `);
+    }
+}
+
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function feedback(range) {
@@ -128,7 +146,7 @@ function log(message) {
 
 function post(message) {
     if (postChannel) {
-        postChannel.append(`${message} `);
+        postChannel.append(`${message}`);
     }
 }
 

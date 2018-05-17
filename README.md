@@ -11,13 +11,6 @@ This VSCode extension for TidalCycles is inspired by the commands from the popul
 - `Ctrl+Enter` to evaluate multiple lines
 - `Ctrl+Alt+H` to hush
 
-### A "flood" function
-
-A custom `flood` function is defined in the bootup of this package. Use `flood` to fill the
-post window with some text:
-
-`flood "hello from tidal "`
-
 ## Syntax Highlighting
 
 In order to get syntax highlighting in `.tidal` files you must do
@@ -42,23 +35,58 @@ TidalCycles and SuperDirt at [TidalCycles](https://tidalcycles.org).
 
 ## Extension Settings
 
-* `tidalcycles.ghci` - path to `ghci.exe`
-* `tidalcycles.feedbackColor` - the color to use for the "eval flash", 
-    in the format `rgba([red],[green],[blue],[opacity])` (e.g. `rgba(100,200,100,0.25)`).
+Take a look in the Contributions tab on the extension page to see what config setting options are available. Here is
+a more verbose explanation of a few of them:
+
+### GHCI path
+
+Probably the most important setting. This is the path to `ghci.exe` on your machine. 
+If it's on your OS PATH, then just setting this value to `ghci` will probably do fine.
+
+Examples:
+
+`"tidalcycles.ghciPath" : "ghci"`
+
+`"tidalcycles.ghciPath" : "c:\\path\\to\\ghci.exe"`
+
+`"tidalcycles.ghciPath" : "/path/to/ghci"`
+
+### Boot Files
+
+This extension has a default internal bootup process to load the Tidal libraries into GHCI.
+If instead you wish you run your own bootup process, you can configure this extension to point
+to a Tidal bootup file on your machine, or use a `BootTidal.hs` file located in the first directory
+of your VS Code IDE.
+
 * `tidalcycles.bootTidalPath` - path to a file that contains line-by-line commands to boot the TidalCycles Haskell package.
 * `tidalcycles.useBootFileInCurrentDirectory` - when equal to `true`, the extension will boot from a file named `BootTidal.hs` in the first workspace folder
-* `tidalcycles.showOutputInConsoleChannel` - if `true`, will show REPL output in a console window. *NOTE: VSCode does not yet support auto-scrolling in console channels, so this feature doesn't work perfectly yet.*
 
-These settings can all be specified in the VS Code settings file like so:
+Examples:
 
 ```
-"tidalcycles": {
-        "feedbackColor": "rgba(100,250,100,0.5)",
-        "ghciPath": "c:\\path\\to\\ghci.exe",
-        "showOutputInConsoleChannel": false,
-        "tidalBootPath": "c:\\path\\to\\file.hs",
-        "useBootFileInCurrentDirectory": true
-    }
+"tidalcycles.bootTidalPath" : "c:\\path\\to\\file\\boot.tidal",
+"tidalcycles.useBootFileInCurrentDirectory" : false
+```
+
+```
+"tidalcycles.useBootFileInCurrentDirectory" : true
+```
+
+### Full Config Example
+
+```
+{
+    "tidalcycles.ghciPath" : "ghci",
+    "tidalcycles.evalCountPrefix": "Evals: ",
+    "tidalcycles.feedbackColor": "rgba(100,250,100,0.5)",
+    "tidalcycles.randomMessages": ["OH HAI", "This is a random message.", "I am coding."],
+    "tidalcycles.randomMessageProbability": 0.5,
+    "tidalcycles.showEvalCount": true,
+    "tidalcycles.showGhciOutput": false,
+    "tidalcycles.showOutputInConsoleChannel": true,
+    "tidalcycles.useBootFileInCurrentDirectory": false,
+    "tidalcycles.bootTidalPath" : "c:\\path\\to\\file\\boot.tidal"
+}
 ```
 
 ## Known Issues
