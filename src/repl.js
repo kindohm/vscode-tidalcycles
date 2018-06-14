@@ -50,7 +50,11 @@ function ensurePostChannel() {
 
 function doSpawn() {
     return new Promise((resolve, reject) => {
-        repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
+        if (config.ghciPath() == 'stack ghci' || config.ghciPath() == 'stack' || config.ghciPath() == 'stack repl') {
+            repl = procspawn('stack', ['ghci', ['--ghc-options=-XOverloadedStrings']]);
+        } else {
+            repl = procspawn(config.ghciPath(), ['-XOverloadedStrings']);
+        }
         repl.stderr.on('data', (data) => {
             const msg = data.toString('utf8');
             console.error(msg);
