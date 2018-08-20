@@ -1,5 +1,8 @@
 # Change Log
 
+## "0.5.10"
+- revert GHCI Linux change (published bug)
+
 ## "0.5.9"
 - fix for the GHCI executable on Linux
 
