@@ -1,5 +1,8 @@
 # Change Log
 
+## "0.5.9"
+- fix for the GHCI executable on Linux
+
 ## "0.5.8"
 - added settings for outputting random messages in standard output, if desired.
 
