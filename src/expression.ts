@@ -8,16 +8,16 @@ function getEditor() {
 }
 
 function getStartLineNumber(doc: any, currentLineNumber: any): any {
-    if (currentLineNumber === 0) return currentLineNumber;
+    if (currentLineNumber === 0) { return currentLineNumber; }
     var line = doc.lineAt(currentLineNumber - 1);
-    if (line.text.trim().length === 0) return currentLineNumber;
+    if (line.text.trim().length === 0) { return currentLineNumber; }
     return getStartLineNumber(doc, currentLineNumber - 1);
 }
 
 function getEndLineNumber(doc: any, currentLineNumber: any): any {
-    if (currentLineNumber + 1 == doc.lineCount) return currentLineNumber;
+    if (currentLineNumber + 1 === doc.lineCount) { return currentLineNumber; }
     var line = doc.lineAt(currentLineNumber + 1);
-    if (line.text.trim().length == 0) return currentLineNumber;
+    if (line.text.trim().length === 0) { return currentLineNumber; }
     return getEndLineNumber(doc, currentLineNumber + 1);
 }
 
@@ -28,7 +28,7 @@ export function getBlock(getMultiline: any): { expression: string, range: vscode
     var position = editor.selection.active;
 
     var line = doc.lineAt(position);
-    if (line.text.trim().length == 0) return null;
+    if (line.text.trim().length === 0) { return null; }
 
     if (!getMultiline) {
         range = new Range(line.lineNumber, 0, line.lineNumber, line.text.length);

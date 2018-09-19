@@ -1,46 +1,47 @@
 'use strict';
 import * as vscode from 'vscode';
 
-let getConfiguration = vscode.workspace.getConfiguration;
-let configSection = 'tidalcycles';
+export class Config {
+    getConfiguration = vscode.workspace.getConfiguration;
+    configSection: string = 'tidalcycles';
 
-export function bootTidalPath() {
-    var value = getConfiguration(configSection).get('bootTidalPath');
-    return value || undefined;
-}
+    public bootTidalPath(): string | null {
+        return this.getConfiguration(this.configSection).get('bootTidalPath', null);
+    }
 
-export function feedbackColor() : string {
-    return getConfiguration(configSection).get('feedbackColor', 'rgba(100,250,100,0.3)');
-}
+    public feedbackColor(): string {
+        return this.getConfiguration(this.configSection).get('feedbackColor', 'rgba(100,250,100,0.3)');
+    }
 
-export function ghciPath() : string {
-    return getConfiguration(configSection).get('ghciPath', 'ghci');
-}
+    public ghciPath(): string {
+        return this.getConfiguration(this.configSection).get('ghciPath', 'ghci');
+    }
 
-export function randomMessages() : string[] {
-    return getConfiguration(configSection).get('randomMessages', []);
-}
+    public randomMessages(): string[] {
+        return this.getConfiguration(this.configSection).get('randomMessages', []);
+    }
 
-export function randomMessageProbability() {
-    return getConfiguration(configSection).get('randomMessageProbability', 0);
-}
+    public randomMessageProbability() {
+        return this.getConfiguration(this.configSection).get('randomMessageProbability', 0);
+    }
 
-export function showEvalCount() {
-    return getConfiguration(configSection).get('showEvalCount', false);
-}
+    public showEvalCount() {
+        return this.getConfiguration(this.configSection).get('showEvalCount', false);
+    }
 
-export function evalCountPrefix() {
-    return getConfiguration(configSection).get('evalCountPrefix', 'evals: ');
-}
+    public evalCountPrefix() {
+        return this.getConfiguration(this.configSection).get('evalCountPrefix', 'evals: ');
+    }
 
-export function showGhciOutput() {
-    return getConfiguration(configSection).get('showGhciOutput', false);
-}
+    public showGhciOutput() {
+        return this.getConfiguration(this.configSection).get('showGhciOutput', false);
+    }
 
-export function showOutputInConsoleChannel() {
-    return getConfiguration(configSection).get('showOutputInConsoleChannel', false);
-}
+    public showOutputInConsoleChannel() {
+        return this.getConfiguration(this.configSection).get('showOutputInConsoleChannel', false);
+    }
 
-export function useBootFileInCurrentDirectory() {
-    return getConfiguration(configSection).get('useBootFileInCurrentDirectory') === true;
+    public useBootFileInCurrentDirectory() {
+        return this.getConfiguration(this.configSection).get('useBootFileInCurrentDirectory') === true;
+    }
 }
