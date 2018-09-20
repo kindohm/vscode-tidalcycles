@@ -17,7 +17,7 @@
         "onCommand:tidal.evalMulti",
         "onCommand:tidal.hush"
     ],
-    "main": "./out/tidal",
+    "main": "./out/main",
     "contributes": {
         "commands": [
             {

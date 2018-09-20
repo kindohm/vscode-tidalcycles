@@ -2,6 +2,23 @@ import { ChildProcess, spawn } from 'child_process';
 import { Config } from './config';
 import { Logger } from './logging';
 
+export interface IGhci {
+    writeLn(command: string): Promise<void>;
+}
+
+export class FakeGhci implements IGhci {
+    private logger: Logger;
+
+    constructor(logger: Logger) {
+        this.logger = logger;
+    }
+    
+    public async writeLn(command: string): Promise<void> {
+        this.logger.log(command);
+        return;
+    }
+}
+
 export class Ghci {
     private ghciProcess: ChildProcess | null = null;
     private logger: Logger;
@@ -12,39 +29,31 @@ export class Ghci {
         this.config = config;
     }
 
-    private getGhciProcess(): Promise<ChildProcess> {
-        return new Promise((resolve, reject) => {
-            // First, try to return existing GHCi process
-            if (this.ghciProcess !== null) {
-                resolve(this.ghciProcess);
-                return;
-            }
+    private async getGhciProcess(): Promise<ChildProcess> {
+        if (this.ghciProcess !== null) {
+            return this.ghciProcess;
+        }
 
-            // Second, try to spawn a new GHCi process
-            try {
-                this.ghciProcess = spawn(this.config.ghciPath(), ['-XOverloadedStrings']);
-                this.ghciProcess.on('data', (data: any) => {
-                    if (this.config.showGhciOutput()) { this.logger.log(data.toString('utf8')); }
-                });
-                resolve();
-                return;
-            } catch (e) {
-                reject(e);
-                return;
+        this.ghciProcess = spawn('stack', [this.config.ghciPath(), '--ghci-options', '-XOverloadedStrings']);
+        this.ghciProcess.stderr.on('data', (data: any) => {
+            if (this.config.showGhciOutput()) { 
+                this.logger.error(`GHCi reports an error: ${data.toString('utf8')}`); 
             }
         });
+        return this.ghciProcess;
     }
 
-    public write(command: string) {
-        this.getGhciProcess().then(ghci => {
-            ghci.stdin.write(command);
-        },
-        err => {
-            this.logger.error(err);
-        });
+    public async write(command: string) {
+        try {
+            let ghciProcess = await this.getGhciProcess();
+            ghciProcess.stdin.write(command);
+        } catch (e) {
+            this.logger.error(`Failed to get GHCi process: ${e}`);
+            return;
+        }
     }
 
-    public writeLn(command: string) {
-        this.write(`${command}\n`);
+    public async writeLn(command: string) {
+        return await this.write(`${command}\n`);
     }
 }

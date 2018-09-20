@@ -15,5 +15,6 @@ export class Logger {
 
     public error(message: string) {
         this.postChannel.appendLine(`Error: ${message}`);
+        vscode.window.showErrorMessage(message);
     }
 }

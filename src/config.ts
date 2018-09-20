@@ -21,27 +21,27 @@ export class Config {
         return this.getConfiguration(this.configSection).get('randomMessages', []);
     }
 
-    public randomMessageProbability() {
+    public randomMessageProbability(): number {
         return this.getConfiguration(this.configSection).get('randomMessageProbability', 0);
     }
 
-    public showEvalCount() {
+    public showEvalCount(): boolean {
         return this.getConfiguration(this.configSection).get('showEvalCount', false);
     }
 
-    public evalCountPrefix() {
+    public evalCountPrefix(): string {
         return this.getConfiguration(this.configSection).get('evalCountPrefix', 'evals: ');
     }
 
-    public showGhciOutput() {
+    public showGhciOutput(): boolean {
         return this.getConfiguration(this.configSection).get('showGhciOutput', false);
     }
 
-    public showOutputInConsoleChannel() {
+    public showOutputInConsoleChannel(): boolean {
         return this.getConfiguration(this.configSection).get('showOutputInConsoleChannel', false);
     }
 
-    public useBootFileInCurrentDirectory() {
+    public useBootFileInCurrentDirectory(): boolean {
         return this.getConfiguration(this.configSection).get('useBootFileInCurrentDirectory') === true;
     }
 }
