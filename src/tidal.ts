@@ -21,7 +21,6 @@ export class Tidal implements ITidal {
     }
     
     private async bootTidal(): Promise<boolean> {
-        // TODO: re-enable boot files
         if (this.tidalBooted) {
             return true;
         }
