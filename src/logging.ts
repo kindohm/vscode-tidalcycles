@@ -13,6 +13,10 @@ export class Logger {
         this.postChannel.appendLine(message);
     }
 
+    public warning(message: string) {
+        this.postChannel.appendLine(`Warning: ${message}`);
+    }
+
     public error(message: string) {
         this.postChannel.appendLine(`Error: ${message}`);
         vscode.window.showErrorMessage(message);

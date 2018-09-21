@@ -42,6 +42,10 @@ export class Config {
     }
 
     public useBootFileInCurrentDirectory(): boolean {
-        return this.getConfiguration(this.configSection).get('useBootFileInCurrentDirectory') === true;
+        return this.getConfiguration(this.configSection).get('useBootFileInCurrentDirectory', false);
+    }
+
+    public useStackGhci(): boolean {
+        return this.getConfiguration(this.configSection).get('useStackGhci', false);
     }
 }
