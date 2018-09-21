@@ -13,18 +13,18 @@ export function activate(context: any) {
     let ghci = new Ghci(logger, config);
     // let ghci = new FakeGhci(logger);
     let tidal = new Tidal(logger, config, ghci);
-    let repl_: Repl = new Repl(logger, config, ghci, tidal);
+    let repl: Repl = new Repl(logger, config, ghci, tidal);
 
     var evalSingle = vscode.commands.registerCommand('tidal.eval', function () {
-        repl_.evaluate(false);
+        repl.evaluate(false);
     });
 
     var evalMulti = vscode.commands.registerCommand('tidal.evalMulti', function () {
-        repl_.evaluate(true);
+        repl.evaluate(true);
     });
 
     var hush = vscode.commands.registerCommand('tidal.hush', function () {
-        repl_.hush();
+        repl.hush();
     });
 
     context.subscriptions.push(evalSingle, evalMulti, hush);

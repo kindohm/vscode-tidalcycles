@@ -6,8 +6,9 @@
     "publisher": "tidalcycles",
     "icon": "images/icon128.png",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
+    "license": "GPL-3.0",
     "engines": {
-        "vscode": "^1.5.0"
+        "vscode": "^1.20.0"
     },
     "categories": [
         "Other"
@@ -118,7 +119,7 @@
         "eslint": "^3.6.0",
         "mocha": "^5.2.0",
         "typescript": "^3.0.3",
-        "vscode": "^1.0.0"
+        "vscode": "^1.1.0"
     },
     "dependencies": {
         "split2": "^3.0.0"

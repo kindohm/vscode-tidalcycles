@@ -22,8 +22,12 @@ export class Repl {
         this.tidal = tidal;
     }
 
-    private static editingTidalFile() {
-        return vscode.window.activeTextEditor.document.fileName.endsWith('.tidal');
+    private static editingTidalFile(): boolean {
+        const editor = vscode.window.activeTextEditor;
+        if (editor === undefined) {
+            return false;
+        }
+        return editor.document.fileName.endsWith('.tidal');
     }
 
     public async hush() {
@@ -67,11 +71,14 @@ export class Repl {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    private feedback(range: any) {
+    private feedback(range: any): void {
         const flashDecorationType = vscode.window.createTextEditorDecorationType({
             backgroundColor: this.config.feedbackColor()
         });
 
+        if (vscode.window.activeTextEditor === undefined) {
+            return;
+        }
         vscode.window.activeTextEditor.setDecorations(flashDecorationType, [range]);
         setTimeout(function () {
             flashDecorationType.dispose();

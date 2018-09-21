@@ -12,6 +12,7 @@ export class Tidal implements ITidal {
     config: Config;
     ghci: IGhci;
     tidalBooted: boolean = false;
+    lineEnding = vscode.workspace.getConfiguration('files').get('eol', '\n');
     
     constructor(logger: Logger, config: Config, ghci: IGhci) {
         this.logger = logger;
@@ -19,98 +20,76 @@ export class Tidal implements ITidal {
         this.ghci = ghci;
     }
     
-    private async bootTidal() {
+    private async bootTidal(): Promise<boolean> {
         // TODO: re-enable boot files
         if (this.tidalBooted) {
-            return;
+            return true;
         }
 
-        for (const command of this.bootCommands) {
+        // Use a custom boot file if the user has specified it. If it cannot be loaded, perform the
+        // default Tidal boot sequence.
+        const bootTidalPath = this.config.bootTidalPath();
+        const useBootFileInCurrentDirectory = this.config.useBootFileInCurrentDirectory();
+
+        let uri: vscode.Uri | null = null;
+
+        if (useBootFileInCurrentDirectory) {
+            const folders = vscode.workspace.workspaceFolders;
+
+            if (folders !== undefined && folders.length > 0) {
+                uri = vscode.Uri.parse(`file:///${folders[0]}/BootTidal.hs`);
+            } else {
+                this.logger.warning('You must open a folder or workspace in order to use the Tidal useBootFileInCurrentDirectory setting.');
+            }
+        } else if (bootTidalPath) {
+            uri = vscode.Uri.parse(`file:///${bootTidalPath}`);
+        }
+
+        let bootCommands: string[] = this.bootCommands;
+
+        if (uri !== null) {
+            let maybeBootCommands = await this.getBootCommandsFromFile(uri);
+            if (maybeBootCommands !== null) {
+                bootCommands = maybeBootCommands;
+            }
+        }
+
+        for (const command of bootCommands) {
             await this.ghci.writeLn(command);
         }
         this.tidalBooted = true;
+        return true;
     }
 
     public async sendTidalExpression(expression: string) {
-        await this.bootTidal();
+        if (!await this.bootTidal()) {
+            this.logger.error('Could not boot Tidal');
+            return;
+        }
 
         this.ghci.writeLn(':{');
-        let lineEnding = vscode.workspace.getConfiguration('files').get('eol', '\n');
-        const splits = expression.split(lineEnding);
+        const splits = expression.split(this.lineEnding);
         for (let i = 0; i < splits.length; i++) {
             this.ghci.writeLn(splits[i]);
         }
         this.ghci.writeLn(':}');
     }
 
-    // private ensureTidalBooted(): Promise<void> {
-    //     return new Promise((resolve, reject) => {
-    //         // If already booted, don't try again
-    //         if (this.tidalBooted) {
-    //             resolve();
-    //             return;
-    //         }
-
-    //         // Use a custom boot file if the user has specified it.
-    //         // The promise is rejected if the file cannot be found. User can
-    //         // re-configure their settings and retry as `booted = false` still. 
-    //         const bootTidalPath = this.config.bootTidalPath();
-    //         const useBootFileInCurrentDirectory = this.config.useBootFileInCurrentDirectory();
-    //         let uri: any;
-
-    //         if (useBootFileInCurrentDirectory) {
-    //             // TODO: fix this - vscode.workspace.workspaceFolders doesn't exist
-    //             let folder: string = vscode.workspace.rootPath;
-
-    //             // user has configured to use a BootTidal.hs file in the current VS Code folder,
-    //             // but there is no folder opened.
-    //             if (folder) {
-    //                 uri = vscode.Uri.parse(`file:///${folder}/BootTidal.hs`);
-    //             } else {
-    //                 const message = 'You must open a folder or workspace in order to use the Tidal useBootFileInCurrentDirectory setting.';
-    //                 this.logger.error(message);
-    //                 return reject();
-    //             }
-
-    //         } else if (bootTidalPath) {
-    //             uri = vscode.Uri.parse(`file:///${bootTidalPath}`);
-    //         }
-
-    //         if (uri) {
-    //             this.logger.log(`Using Tidal boot file on disk at ${uri.fsPath}`);
-    //             const p = vscode.workspace.openTextDocument(uri);
-
-    //             return p.then((doc: any) => {
-    //                 // only gets called if file was found.
-    //                 const commands = doc.getText().split('\n');
-    //                 for (let i = 0; i < commands.length; i++) {
-    //                     this.ghci.writeLn(commands[i]);
-    //                 }
-    //                 this.tidalBooted = true;
-    //                 resolve();
-    //                 return;
-    //             }, (reason: any) => {
-    //                 const message = `Could not open boot file located at ${uri.fsPath}. User Settings: { bootTidalPath: ${bootTidalPath}, useBootFileInCurrentDirectory: ${useBootFileInCurrentDirectory} }.`;
-    //                 this.logger.error(message);
-    //                 reject();
-    //                 return;
-    //             });
-    //         }
-
-    //         this.logger.log('Using default Tidal package boot.');
-    //         return Promise.all(this.bootCommands.map(this.ghci.writeLn))
-    //             .then(() => {
-    //                 this.tidalBooted = true;
-    //                 resolve();
-    //                 return;
-    //             })
-    //             .catch((err) => {
-    //                 this.logger.error(err);
-    //                 reject();
-    //                 return;
-    //             });
-    //     });
-    // }
+    private async getBootCommandsFromFile(uri: vscode.Uri): Promise<string[] | null> {
+            
+        this.logger.log(`Using Tidal boot file on disk at ${uri.fsPath}`);
+            
+        let doc: vscode.TextDocument;
+        try {
+            doc = await vscode.workspace.openTextDocument(uri);
+            return doc.getText().split(this.lineEnding);
+        } catch (e) {
+            this.logger.error(`Failed to load boot commands from ${uri}`);
+            return null;
+        } finally {
+            return null;
+        }
+    }
 
     bootCommands: string[] =
         [

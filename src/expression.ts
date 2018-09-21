@@ -3,10 +3,6 @@ import * as vscode from 'vscode';
 
 let Range = vscode.Range;
 
-function getEditor() {
-    return vscode.window.activeTextEditor;
-}
-
 function getStartLineNumber(doc: any, currentLineNumber: any): any {
     if (currentLineNumber === 0) { return currentLineNumber; }
     var line = doc.lineAt(currentLineNumber - 1);
@@ -23,7 +19,12 @@ function getEndLineNumber(doc: any, currentLineNumber: any): any {
 
 export function getBlock(getMultiline: any): { expression: string, range: vscode.Range } | null {
     var range;
-    var editor = getEditor();
+    var editor = vscode.window.activeTextEditor;
+
+    if (editor === undefined) {
+        return null;
+    }
+
     var doc = editor.document;
     var position = editor.selection.active;
 
