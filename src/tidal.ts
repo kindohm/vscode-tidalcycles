@@ -1,6 +1,7 @@
 import { Logger } from "./logging";
 import { Config } from "./config";
 import { IGhci } from "./ghci";
+import * as vscode from 'vscode';
 
 export interface ITidal {
     sendTidalExpression(expression: string): Promise<void>;
@@ -34,7 +35,8 @@ export class Tidal implements ITidal {
         await this.bootTidal();
 
         this.ghci.writeLn(':{');
-        const splits = expression.split('\n');
+        let lineEnding = vscode.workspace.getConfiguration('files').get('eol', '\n');
+        const splits = expression.split(lineEnding);
         for (let i = 0; i < splits.length; i++) {
             this.ghci.writeLn(splits[i]);
         }

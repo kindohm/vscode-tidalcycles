@@ -3,6 +3,7 @@ import { Config } from './config';
 import { Logger } from './logging';
 import * as vscode from 'vscode';
 import * as split2 from 'split2';
+import { EOL } from 'os';
 
 export interface IGhci {
     writeLn(command: string): Promise<void>;
@@ -66,6 +67,6 @@ export class Ghci {
     }
 
     public async writeLn(command: string) {
-        return await this.write(`${command}\n`);
+        return await this.write(`${command}${EOL}`);
     }
 }

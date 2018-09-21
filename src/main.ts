@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { Repl } from './repl';
 import { Logger } from './logging';
 import { Config } from './config';
-import { FakeGhci, Ghci } from './ghci';
+import { Ghci } from './ghci';
 import { Tidal } from './tidal';
 
 export function activate(context: any) {
