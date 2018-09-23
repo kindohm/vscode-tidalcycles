@@ -7,7 +7,7 @@ import { Tidal } from './tidal';
 
 export function activate(context: any) {
 
-    let logger = new Logger("TidalCycles");
+    let logger = new Logger(vscode.window.createOutputChannel('TidalCycles'));
     let config = new Config();
     let ghci = new Ghci(logger, config);
     // let ghci = new FakeGhci(logger);

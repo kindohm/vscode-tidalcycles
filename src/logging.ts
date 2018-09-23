@@ -1,23 +1,29 @@
 import * as vscode from 'vscode';
 
-export class Logger {
-    postChannel: vscode.OutputChannel;
+export interface ILogger {
+    log(message: string): void;
+    warning(message: string): void;
+    error(message: string): void;
+}
 
-    constructor(channel: string) {
-        this.postChannel = vscode.window.createOutputChannel(channel);
-        this.postChannel.show(true);
+export class Logger implements ILogger {
+    channel: vscode.OutputChannel;
+
+    constructor(channel: vscode.OutputChannel) {
+        this.channel = channel;
+        this.channel.show(true);
     }
 
-    public log(message: string) {
-        this.postChannel.appendLine(message);
+    public log(message: string): void {
+        this.channel.appendLine(message);
     }
 
-    public warning(message: string) {
-        this.postChannel.appendLine(`Warning: ${message}`);
+    public warning(message: string): void {
+        this.channel.appendLine(`Warning: ${message}`);
     }
 
-    public error(message: string) {
-        this.postChannel.appendLine(`Error: ${message}`);
+    public error(message: string): void {
+        this.channel.appendLine(`Error: ${message}`);
         vscode.window.showErrorMessage(message);
     }
 }

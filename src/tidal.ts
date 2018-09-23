@@ -1,4 +1,4 @@
-import { Logger } from "./logging";
+import { ILogger } from "./logging";
 import { Config } from "./config";
 import { IGhci } from "./ghci";
 import * as vscode from 'vscode';
@@ -8,18 +8,18 @@ export interface ITidal {
 }
 
 export class Tidal implements ITidal {
-    logger: Logger;
+    logger: ILogger;
     config: Config;
     ghci: IGhci;
     tidalBooted: boolean = false;
-    lineEnding = vscode.workspace.getConfiguration('files').get('eol', '\n');
-    
-    constructor(logger: Logger, config: Config, ghci: IGhci) {
+    lineEnding = vscode.workspace.getConfiguration('files', null).get('eol', '\n');
+
+    constructor(logger: ILogger, config: Config, ghci: IGhci) {
         this.logger = logger;
         this.config = config;
         this.ghci = ghci;
     }
-    
+
     private async bootTidal(): Promise<boolean> {
         if (this.tidalBooted) {
             return true;
@@ -75,9 +75,9 @@ export class Tidal implements ITidal {
     }
 
     private async getBootCommandsFromFile(uri: vscode.Uri): Promise<string[] | null> {
-            
+
         this.logger.log(`Using Tidal boot file on disk at ${uri.fsPath}`);
-            
+
         let doc: vscode.TextDocument;
         try {
             doc = await vscode.workspace.openTextDocument(uri);

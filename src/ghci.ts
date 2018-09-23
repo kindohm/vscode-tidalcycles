@@ -1,6 +1,6 @@
 import { ChildProcess, spawn } from 'child_process';
 import { Config } from './config';
-import { Logger } from './logging';
+import { ILogger } from './logging';
 import * as vscode from 'vscode';
 import * as split2 from 'split2';
 import { EOL } from 'os';
@@ -10,9 +10,9 @@ export interface IGhci {
 }
 
 export class FakeGhci implements IGhci {
-    private logger: Logger;
+    private logger: ILogger;
 
-    constructor(logger: Logger) {
+    constructor(logger: ILogger) {
         this.logger = logger;
     }
     
@@ -24,10 +24,10 @@ export class FakeGhci implements IGhci {
 
 export class Ghci {
     private ghciProcess: ChildProcess | null = null;
-    private logger: Logger;
+    private logger: ILogger;
     private config: Config;
 
-    constructor(logger: Logger, config: Config) {
+    constructor(logger: ILogger, config: Config) {
         this.logger = logger;
         this.config = config;
     }

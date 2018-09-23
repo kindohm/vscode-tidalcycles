@@ -1,20 +1,20 @@
 import * as vscode from 'vscode';
 import * as expression from './expression';
 import { Config } from './config';
-import { Logger } from './logging';
+import { ILogger } from './logging';
 import { IGhci } from './ghci';
 import { ITidal } from './tidal';
 
 export class Repl {
 
-    logger: Logger;
+    logger: ILogger;
     config: Config;
     ghci: IGhci;
     tidal: ITidal;
     postChannel: vscode.OutputChannel | null = null;
     evalCount = 0;
 
-    constructor(logger: Logger, config: Config, ghci: IGhci, tidal: ITidal) {
+    constructor(logger: ILogger, config: Config, ghci: IGhci, tidal: ITidal) {
         this.logger = logger;
         this.config = config;
         this.ghci = ghci;
