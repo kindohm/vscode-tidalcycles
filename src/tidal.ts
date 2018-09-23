@@ -4,6 +4,10 @@ import { IGhci } from "./ghci";
 import * as vscode from 'vscode';
 
 export interface ITidal {
+    /**
+     * Provides an interface to send instructions to the current Tidal instance.
+     */
+
     sendTidalExpression(expression: string): Promise<void>;
 }
 

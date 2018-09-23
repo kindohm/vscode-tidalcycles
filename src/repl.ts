@@ -6,12 +6,15 @@ import { IGhci } from './ghci';
 import { ITidal } from './tidal';
 
 export interface IRepl {
+    /**
+     * Provides the UI commands for an interactive Tidal session.
+     */
+
     hush(): Promise<void>;
     evaluate(isMultiline: any): Promise<void>;
 }
 
 export class Repl implements IRepl {
-
     logger: ILogger;
     config: Config;
     ghci: IGhci;

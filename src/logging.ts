@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
 
 export interface ILogger {
+    /**
+     * A simple logging interface.
+     */
+
     log(message: string): void;
     warning(message: string): void;
     error(message: string): void;

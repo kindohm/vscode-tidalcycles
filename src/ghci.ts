@@ -6,6 +6,10 @@ import * as split2 from 'split2';
 import { EOL } from 'os';
 
 export interface IGhci {
+    /**
+     * Provides an interface for sending commands to a GHCi session.
+     */
+
     writeLn(command: string): Promise<void>;
 }
 
