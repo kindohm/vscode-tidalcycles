@@ -5,7 +5,12 @@ import { ILogger } from './logging';
 import { IGhci } from './ghci';
 import { ITidal } from './tidal';
 
-export class Repl {
+export interface IRepl {
+    hush(): Promise<void>;
+    evaluate(isMultiline: any): Promise<void>;
+}
+
+export class Repl implements IRepl {
 
     logger: ILogger;
     config: Config;

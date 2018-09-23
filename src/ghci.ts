@@ -9,7 +9,7 @@ export interface IGhci {
     writeLn(command: string): Promise<void>;
 }
 
-export class FakeGhci implements IGhci {
+export class MockGhci implements IGhci {
     private logger: ILogger;
 
     constructor(logger: ILogger) {

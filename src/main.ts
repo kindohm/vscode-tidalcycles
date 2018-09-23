@@ -7,12 +7,11 @@ import { Tidal } from './tidal';
 
 export function activate(context: any) {
 
-    let logger = new Logger(vscode.window.createOutputChannel('TidalCycles'));
-    let config = new Config();
-    let ghci = new Ghci(logger, config);
-    // let ghci = new FakeGhci(logger);
-    let tidal = new Tidal(logger, config, ghci);
-    let repl: Repl = new Repl(logger, config, ghci, tidal);
+    const logger = new Logger(vscode.window.createOutputChannel('TidalCycles'));
+    const config = new Config();
+    const ghci = new Ghci(logger, config);
+    const tidal = new Tidal(logger, config, ghci);
+    const repl = new Repl(logger, config, ghci, tidal);
 
     var evalSingle = vscode.commands.registerCommand('tidal.eval', function () {
         repl.evaluate(false);
