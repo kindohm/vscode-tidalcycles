@@ -13,15 +13,15 @@ export function activate(context: any) {
     const tidal = new Tidal(logger, config, ghci);
     const repl = new Repl(logger, config, ghci, tidal);
 
-    var evalSingle = vscode.commands.registerCommand('tidal.eval', function () {
+    const evalSingle = vscode.commands.registerCommand('tidal.eval', function () {
         repl.evaluate(false);
     });
 
-    var evalMulti = vscode.commands.registerCommand('tidal.evalMulti', function () {
+    const evalMulti = vscode.commands.registerCommand('tidal.evalMulti', function () {
         repl.evaluate(true);
     });
 
-    var hush = vscode.commands.registerCommand('tidal.hush', function () {
+    const hush = vscode.commands.registerCommand('tidal.hush', function () {
         repl.hush();
     });
 
