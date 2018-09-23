@@ -1,4 +1,3 @@
-'use strict';
 import * as vscode from 'vscode';
 import { Repl } from './repl';
 import { Logger } from './logging';

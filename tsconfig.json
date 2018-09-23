@@ -13,6 +13,7 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
         "strictFunctionTypes": true,
+        "alwaysStrict": true,
         /* Additional Checks */
         "noUnusedLocals": true /* Report errors on unused locals. */
         // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */

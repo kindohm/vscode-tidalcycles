@@ -1,4 +1,3 @@
-'use strict';
 import * as vscode from 'vscode';
 import * as expression from './expression';
 import { Config } from './config';
