@@ -11,7 +11,7 @@
 		],
 		"triple-equals": true,
 		"promise-function-async": true,
-		"max-line-length": [true, 128],
+		"max-line-length": [true, 128]
 	},
 	"defaultSeverity": "warning"
 }

@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import * as expression from './expression';
+import * as expression from './editor';
 import { Config } from './config';
 import { ILogger } from './logging';
 import { IGhci } from './ghci';
 import { ITidal } from './tidal';
+import { TidalEditor } from './editor';
 
 export interface IRepl {
     /**
@@ -11,7 +12,7 @@ export interface IRepl {
      */
 
     hush(): Promise<void>;
-    evaluate(isMultiline: any): Promise<void>;
+    evaluate(isMultiline: boolean): Promise<void>;
 }
 
 export class Repl implements IRepl {
@@ -46,12 +47,16 @@ export class Repl implements IRepl {
         this.logger.log('hush');
     }
 
-    public async evaluate(isMultiline: any) {
+    public async evaluate(isMultiline: boolean) {
         if (!Repl.editingTidalFile()) { 
             return; 
         }
 
-        const block = expression.getBlock(isMultiline);
+        if (vscode.window.activeTextEditor === undefined) {
+            return;
+        }
+
+        const block = new TidalEditor(vscode.window.activeTextEditor).getTidalExpressionUnderCursor(isMultiline);
         if (block) {
             await this.tidal.sendTidalExpression(block.expression);
             this.feedback(block.range);
@@ -72,13 +77,13 @@ export class Repl implements IRepl {
         }
     }
 
-    private getRandomIntInclusive(min: any, max: any) {
+    private getRandomIntInclusive(min: number, max: number) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    private feedback(range: any): void {
+    private feedback(range: vscode.Range): void {
         const flashDecorationType = vscode.window.createTextEditorDecorationType({
             backgroundColor: this.config.feedbackColor()
         });

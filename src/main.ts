@@ -5,7 +5,7 @@ import { Config } from './config';
 import { Ghci } from './ghci';
 import { Tidal } from './tidal';
 
-export function activate(context: any) {
+export function activate(context: vscode.ExtensionContext) {
 
     const logger = new Logger(vscode.window.createOutputChannel('TidalCycles'));
     const config = new Config();
