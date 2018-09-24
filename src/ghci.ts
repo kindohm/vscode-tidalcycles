@@ -5,10 +5,10 @@ import * as vscode from 'vscode';
 import * as split2 from 'split2';
 import { EOL } from 'os';
 
+/**
+ * Provides an interface for sending commands to a GHCi session.
+ */
 export interface IGhci {
-    /**
-     * Provides an interface for sending commands to a GHCi session.
-     */
 
     writeLn(command: string): Promise<void>;
 }

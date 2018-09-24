@@ -1,16 +1,14 @@
 import * as vscode from 'vscode';
-import * as expression from './editor';
 import { Config } from './config';
 import { ILogger } from './logging';
 import { IGhci } from './ghci';
 import { ITidal } from './tidal';
 import { TidalEditor } from './editor';
 
+/**
+ * Provides the UI commands for an interactive Tidal session.
+ */
 export interface IRepl {
-    /**
-     * Provides the UI commands for an interactive Tidal session.
-     */
-
     hush(): Promise<void>;
     evaluate(isMultiline: boolean): Promise<void>;
 }

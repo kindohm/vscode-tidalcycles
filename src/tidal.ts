@@ -3,11 +3,11 @@ import { Config } from "./config";
 import { IGhci } from "./ghci";
 import * as vscode from 'vscode';
 
-export interface ITidal {
-    /**
-     * Provides an interface to send instructions to the current Tidal instance.
-     */
 
+/**
+ * Provides an interface to send instructions to the current Tidal instance.
+ */
+export interface ITidal {
     sendTidalExpression(expression: string): Promise<void>;
 }
 
