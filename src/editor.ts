@@ -27,6 +27,7 @@ export class TidalEditor {
     }
 
     private getStartLineNumber(document: vscode.TextDocument, currentLineNumber: number): number {
+        // TODO: fix behaviour
         while (document.lineAt(currentLineNumber).text.trim().length > 0) {
             currentLineNumber--;
         }
@@ -34,6 +35,7 @@ export class TidalEditor {
     }
 
     private getEndLineNumber(document: vscode.TextDocument, currentLineNumber: number): number {
+        // TODO: fix behaviour
         while (document.lineAt(currentLineNumber).text.trim().length > 0) {
             currentLineNumber--;
         }
@@ -53,6 +55,7 @@ export class TidalEditor {
 
         // If there is a single-line expression
         if (!getMultiline) {
+            // TODO: if non-zero selection, find the first line that isn't empty.
             range = new Range(line.lineNumber, 0, line.lineNumber, line.text.length);
             return new TidalExpression(line.text, range);
         }
