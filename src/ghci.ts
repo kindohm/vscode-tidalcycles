@@ -9,7 +9,6 @@ import { EOL } from 'os';
  * Provides an interface for sending commands to a GHCi session.
  */
 export interface IGhci {
-
     writeLn(command: string): Promise<void>;
 }
 

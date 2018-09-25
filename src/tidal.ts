@@ -71,12 +71,12 @@ export class Tidal implements ITidal {
             return;
         }
 
-        this.ghci.writeLn(':{');
+        await this.ghci.writeLn(':{');
         const splits = expression.split(this.lineEnding);
         for (let i = 0; i < splits.length; i++) {
-            this.ghci.writeLn(splits[i]);
+            await this.ghci.writeLn(splits[i]);
         }
-        this.ghci.writeLn(':}');
+        await this.ghci.writeLn(':}');
     }
 
     private async getBootCommandsFromFile(uri: vscode.Uri): Promise<string[] | null> {
