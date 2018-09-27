@@ -81,20 +81,15 @@ export class TidalEditor {
     }
 
     public getTidalExpressionUnderCursor(getMultiline: boolean): TidalExpression | null {
-        let range;
-
         const document = this.editor.document;
         const position = this.editor.selection.active;
 
         const line = document.lineAt(position);
 
-        // If there is no expression
-        if (line.text.trim().length === 0) { return null; }
-
         // If there is a single-line expression
         if (!getMultiline) {
-            // TODO: if non-zero selection, find the first line that isn't empty.
-            range = new Range(line.lineNumber, 0, line.lineNumber, line.text.length);
+            if (this.isEmpty(document, position.line)) { return null; }
+            let range = new Range(line.lineNumber, 0, line.lineNumber, line.text.length);
             return new TidalExpression(line.text, range);
         }
 
@@ -108,7 +103,7 @@ export class TidalEditor {
         const endLineNumber = this.getEndLineNumber(document, startLineNumber);
         const endCol = document.lineAt(endLineNumber).text.length;
 
-        range = new Range(startLineNumber, 0, endLineNumber, endCol);
+        let range = new Range(startLineNumber, 0, endLineNumber, endCol);
 
         return new TidalExpression(document.getText(range), range);
     }    

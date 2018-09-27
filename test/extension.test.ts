@@ -64,6 +64,13 @@ function createMockDocument(lines: string[]): TypeMoq.IMock<TextDocument> {
         mockDocument.setup(d => d.lineAt(index))
             .returns(() => new TestTextLine(index, line));
     });
+    mockDocument.setup(d => d.lineCount).returns(() => lines.length);
+
+    let r = new Range(0, 0, 0, 0);
+    mockDocument
+        .setup(d => d.getText(TypeMoq.It.isAny()))
+        .returns((r: Range) => `${r.start.line}`);
+    // TODO: return actual text
 
     return mockDocument;
 }
