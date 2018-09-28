@@ -66,11 +66,23 @@ function createMockDocument(lines: string[]): TypeMoq.IMock<TextDocument> {
     });
     mockDocument.setup(d => d.lineCount).returns(() => lines.length);
 
-    let r = new Range(0, 0, 0, 0);
     mockDocument
         .setup(d => d.getText(TypeMoq.It.isAny()))
-        .returns((r: Range) => `${r.start.line}`);
-    // TODO: return actual text
+        .returns((r: Range) => {
+            let result = "";
+            for (let line = r.start.line; line <= r.end.line; line++) {
+                if (line === r.start.line) {
+                    result += mockDocument.object.lineAt(line).text.substring(r.start.character);
+                    result += "\r\n";
+                } else if (line < r.end.line) {
+                    result += mockDocument.object.lineAt(line);
+                    result += "\r\n";
+                } else {
+                    result += mockDocument.object.lineAt(line).text.substring(0, r.end.character);
+                }
+            }
+            return result;
+        });
 
     return mockDocument;
 }
@@ -130,6 +142,42 @@ suite("Editor", () => {
         if (expression !== null) {
             expect(expression.expression).to.be.equal("one\r\ntwo");
         }
+    });
+
+    test("Multi-line expression from split selection", () => {
+        let mockDocument = createMockDocument(["", "one", "two", " ", "three"]);
+        let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(1, 0), new Position(4, 5)));
+
+        let tidalEditor = new TidalEditor(mockEditor.object);
+        let expression = tidalEditor.getTidalExpressionUnderCursor(true);
+
+        assert.isNotNull(expression);
+        if (expression !== null) {
+            expect(expression.expression).to.be.equal("one\r\ntwo");
+        }
+    });
+
+    test("Multi-line expression retrieved before selection", () => {
+        let mockDocument = createMockDocument(["", "one", "two", " ", "three"]);
+        let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(2, 0), new Position(4, 2)));
+
+        let tidalEditor = new TidalEditor(mockEditor.object);
+        let expression = tidalEditor.getTidalExpressionUnderCursor(true);
+
+        assert.isNotNull(expression);
+        if (expression !== null) {
+            expect(expression.expression).to.be.equal("one\r\ntwo");
+        }
+    });
+
+    test("Multi-line expression becomes null from blank line", () => {
+        let mockDocument = createMockDocument(["", "one", "two", " ", "three"]);
+        let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(3, 0), new Position(3, 0)));
+
+        let tidalEditor = new TidalEditor(mockEditor.object);
+        let expression = tidalEditor.getTidalExpressionUnderCursor(true);
+
+        assert.isNull(expression);
     });
 });
 
