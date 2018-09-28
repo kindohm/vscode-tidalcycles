@@ -1,42 +1,7 @@
-import { expect, assert } from 'chai';
-import 'mocha';
+import { TextEditor, TextLine, Range, Position, TextDocument, Selection } from 'vscode';
 import * as TypeMoq from "typemoq";
-import { Logger } from '../src/logging';
-import { Ghci } from '../src/ghci';
-import { Config } from '../src/config';
-import { Tidal } from '../src/tidal';
-import { OutputChannel, TextEditor, TextLine, Range, Position, TextDocument, Selection } from 'vscode';
+import { expect, assert } from 'chai';
 import { TidalEditor } from '../src/editor';
-
-suite("Tidal", () => {
-    test("Single line sent to tidal is passed to GHCi", () => {
-        let mockedLogger = TypeMoq.Mock.ofType<Logger>();
-        let mockedConfig = TypeMoq.Mock.ofType<Config>();
-        let mockedGhci = TypeMoq.Mock.ofType<Ghci>();
-        let tidal: Tidal = new Tidal(mockedLogger.object, mockedConfig.object, mockedGhci.object);
-        tidal.tidalBooted = true;
-
-        mockedGhci.setup(ghci => ghci.writeLn(':{')).verifiable(TypeMoq.Times.once());
-        mockedGhci.setup(ghci => ghci.writeLn('d1 $ sound "bd"')).verifiable(TypeMoq.Times.once());
-        mockedGhci.setup(ghci => ghci.writeLn(':}')).verifiable(TypeMoq.Times.once());
-
-        return tidal.sendTidalExpression('d1 $ sound "bd"').then(() => {
-            mockedGhci.verifyAll();
-        });
-    });
-});
-
-suite("Logger", () => {
-    test("Logger posts log message to channel", () => {
-        let mockChannel = TypeMoq.Mock.ofType<OutputChannel>();
-        mockChannel.setup(c => c.appendLine(TypeMoq.It.isAnyString())).verifiable(TypeMoq.Times.once());
-
-        let logger = new Logger(mockChannel.object);
-        logger.log("Test message");
-
-        mockChannel.verifyAll();
-    });
-});
 
 class TestTextLine implements TextLine {
     lineNumber: number;
@@ -180,4 +145,3 @@ suite("Editor", () => {
         assert.isNull(expression);
     });
 });
-

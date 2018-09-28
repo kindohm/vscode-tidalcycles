@@ -1,15 +1,13 @@
-import * as vscode from 'vscode';
-
-let Range = vscode.Range;
+import {Range, TextEditor, TextDocument, } from 'vscode';
 
 /**
  * Represents a single expression to be executed by Tidal.
  */
 export class TidalExpression {
     public readonly expression: string;
-    public readonly range: vscode.Range;
+    public readonly range: Range;
 
-    constructor(expression: string, range: vscode.Range) {
+    constructor(expression: string, range: Range) {
         this.expression = expression;
         this.range = range;
     }
@@ -20,13 +18,13 @@ export class TidalExpression {
  */
 export class TidalEditor {
 
-    private editor: vscode.TextEditor;
+    private editor: TextEditor;
 
-    constructor(editor: vscode.TextEditor) {
+    constructor(editor: TextEditor) {
         this.editor = editor;
     }
 
-    private isEmpty(document: vscode.TextDocument, line: number): boolean {
+    private isEmpty(document: TextDocument, line: number): boolean {
         return document.lineAt(line).text.trim().length === 0;
     }
 
@@ -34,7 +32,7 @@ export class TidalEditor {
      * Given a document and a range, find the first line which is not blank. 
      * Returns null if there are no non-blank lines before the end of the selection.
      */
-    private getFirstNonBlankLineInRange(document: vscode.TextDocument, range: vscode.Range): number | null {
+    private getFirstNonBlankLineInRange(document: TextDocument, range: Range): number | null {
         for (let currentLineNumber = range.start.line; currentLineNumber <= range.end.line; currentLineNumber++) {
             if (!this.isEmpty(document, currentLineNumber)) {
                 return currentLineNumber;
@@ -48,7 +46,7 @@ export class TidalEditor {
      * Assuming that the start position of the range is inside a Tidal expression, search backwards for the first line
      * of that expression.
      */
-    private getFirstExpressionLineBeforeSelection(document: vscode.TextDocument, range: vscode.Range): number | null {
+    private getFirstExpressionLineBeforeSelection(document: TextDocument, range: Range): number | null {
         let currentLineNumber = range.start.line;
 
         // If current line is empty, do not attempt to search.
@@ -63,7 +61,7 @@ export class TidalEditor {
         return currentLineNumber + 1;
     }
 
-    private getStartLineNumber(document: vscode.TextDocument, range: vscode.Range): number | null {
+    private getStartLineNumber(document: TextDocument, range: Range): number | null {
         // If current line is empty, search forward for the expression start
         if (this.isEmpty(document, range.start.line)) {
             return this.getFirstNonBlankLineInRange(document, range);
@@ -72,7 +70,7 @@ export class TidalEditor {
         return this.getFirstExpressionLineBeforeSelection(document, range);
     }
 
-    private getEndLineNumber(document: vscode.TextDocument, startLineNumber: number): number {
+    private getEndLineNumber(document: TextDocument, startLineNumber: number): number {
         let currentLineNumber = startLineNumber;
         while (currentLineNumber < document.lineCount && !this.isEmpty(document, currentLineNumber)) {
             currentLineNumber++;
@@ -94,7 +92,7 @@ export class TidalEditor {
         }
 
         // If there is a multi-line expression
-        const selectedRange = new vscode.Range(this.editor.selection.anchor, this.editor.selection.active);
+        const selectedRange = new Range(this.editor.selection.anchor, this.editor.selection.active);
         const startLineNumber = this.getStartLineNumber(document, selectedRange);
         if (startLineNumber === null) {
             return null;
