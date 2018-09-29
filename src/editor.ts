@@ -85,6 +85,7 @@ export class TidalEditor {
         const line = document.lineAt(position);
 
         // If there is a single-line expression
+        // TODO: decide the behaviour in case in multi-line selections
         if (!getMultiline) {
             if (this.isEmpty(document, position.line)) { return null; }
             let range = new Range(line.lineNumber, 0, line.lineNumber, line.text.length);
