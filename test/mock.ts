@@ -1,4 +1,4 @@
-import { TextEditor, TextLine, Range, Position, TextDocument, Selection } from 'vscode';
+import { TextEditor, TextLine, Range, Position, TextDocument, Selection, TextEditorDecorationType, window, DecorationRenderOptions } from 'vscode';
 import * as TypeMoq from 'typemoq';
 
 class TestTextLine implements TextLine {
@@ -56,5 +56,15 @@ export function createMockEditor(document: TextDocument, selection: Selection): 
     let mockEditor = TypeMoq.Mock.ofType<TextEditor>();
     mockEditor.setup(e => e.document).returns(() => document);
     mockEditor.setup(e => e.selection).returns(() => selection);
+    mockEditor.setup(e => e.setDecorations(TypeMoq.It.isAny(), TypeMoq.It.isAny()));
     return mockEditor;
+}
+
+export function createMockCreateTextEditorDecorationType():
+    TypeMoq.IMock<(options: DecorationRenderOptions) => TextEditorDecorationType> {
+    let mockTextEditorDecorationType = TypeMoq.Mock.ofType<TextEditorDecorationType>();
+    mockTextEditorDecorationType.setup(d => d.dispose());
+    let mockCreateTextEditorDecorationType = TypeMoq.Mock.ofInstance(window.createTextEditorDecorationType);
+    mockCreateTextEditorDecorationType.setup(f => f(TypeMoq.It.isAny())).returns(() => mockTextEditorDecorationType.object);
+    return mockCreateTextEditorDecorationType;
 }

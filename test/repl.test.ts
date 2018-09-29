@@ -1,105 +1,94 @@
 import { Position, Selection } from 'vscode';
 import * as TypeMoq from 'typemoq';
-import { createMockDocument, createMockEditor } from './mock';
+import { createMockDocument, createMockEditor, createMockCreateTextEditorDecorationType } from './mock';
 import { Repl } from '../src/repl';
-import { ILogger } from '../src/logging';
 import { ITidal } from '../src/tidal';
 import { IHistory } from '../src/history';
 
 
 suite('Repl', () => {
-    test('Hush executed in .tidal file', () => {
-        let mockLogger = TypeMoq.Mock.ofType<ILogger>();
+    test('Hush executed in .tidal file', async () => {
         let mockTidal = TypeMoq.Mock.ofType<ITidal>();
         let mockDocument = createMockDocument(['Hello world']);
         let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(0, 0), new Position(0, 0)));
         let mockHistory = TypeMoq.Mock.ofType<IHistory>();
+        let mockCreateTextEditorDecorationType = createMockCreateTextEditorDecorationType();
 
         mockDocument.setup(d => d.fileName).returns(() => 'myfile.tidal');
 
-        let repl = new Repl(mockLogger.object, mockTidal.object, 
-            mockEditor.object, mockHistory.object, 'rgba(100,250,100,0.3)');
-
-        repl.hush();
+        let repl = new Repl(mockTidal.object, mockEditor.object, mockHistory.object, 
+            'rgba(100,250,100,0.3)', mockCreateTextEditorDecorationType.object);
+        await repl.hush();
 
         mockTidal.verify(t => t.sendTidalExpression('hush'), TypeMoq.Times.once());
-
-        mockTidal.verifyAll();
+        mockHistory.verify(h => h.log(TypeMoq.It.isAny()), TypeMoq.Times.once());
     });
 
-    test('Hush not executed in non-.tidal file', () => {
-        let mockLogger = TypeMoq.Mock.ofType<ILogger>();
+    test('Hush not executed in non-.tidal file', async () => {
         let mockTidal = TypeMoq.Mock.ofType<ITidal>();
         let mockDocument = createMockDocument(['Hello world']);
         let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(0, 0), new Position(0, 0)));
         let mockHistory = TypeMoq.Mock.ofType<IHistory>();
+        let mockCreateTextEditorDecorationType = createMockCreateTextEditorDecorationType();
 
         mockDocument.setup(d => d.fileName).returns(() => 'myfile.ideal');
 
-        let repl = new Repl(mockLogger.object, mockTidal.object, 
-            mockEditor.object, mockHistory.object, 'rgba(100,250,100,0.3)');
-
-        repl.hush();
+        let repl = new Repl(mockTidal.object, mockEditor.object, mockHistory.object, 
+            'rgba(100,250,100,0.3)', mockCreateTextEditorDecorationType.object);
+        await repl.hush();
 
         mockTidal.verify(t => t.sendTidalExpression(TypeMoq.It.isAnyString()), TypeMoq.Times.never());
-
-        mockTidal.verifyAll();
+        mockHistory.verify(h => h.log(TypeMoq.It.isAny()), TypeMoq.Times.never());
     });
 
-    test('Expression not evaluated in non-.tidal file', () => {
-        let mockLogger = TypeMoq.Mock.ofType<ILogger>();
+    test('Expression not evaluated in non-.tidal file', async () => {
         let mockTidal = TypeMoq.Mock.ofType<ITidal>();
         let mockDocument = createMockDocument(['Foo', 'bar', '', 'baz']);
         let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(1, 0), new Position(1, 2)));
         let mockHistory = TypeMoq.Mock.ofType<IHistory>();
+        let mockCreateTextEditorDecorationType = createMockCreateTextEditorDecorationType();
 
         mockDocument.setup(d => d.fileName).returns(() => 'myfile.ideal');
 
-        let repl = new Repl(mockLogger.object, mockTidal.object, 
-            mockEditor.object, mockHistory.object, 'rgba(100,250,100,0.3)');
-
-        repl.evaluate(false);
+        let repl = new Repl(mockTidal.object, mockEditor.object, mockHistory.object, 
+            'rgba(100,250,100,0.3)', mockCreateTextEditorDecorationType.object);
+        await repl.evaluate(false);
 
         mockTidal.verify(t => t.sendTidalExpression(TypeMoq.It.isAnyString()), TypeMoq.Times.never());
-
-        mockTidal.verifyAll();
+        mockHistory.verify(h => h.log(TypeMoq.It.isAny()), TypeMoq.Times.never());
     });
 
-    test('Multi-line expression evaluated in .tidal file', () => {
-        let mockLogger = TypeMoq.Mock.ofType<ILogger>();
+    test('Multi-line expression evaluated in .tidal file', async () => {
         let mockTidal = TypeMoq.Mock.ofType<ITidal>();
         let mockDocument = createMockDocument(['Foo', 'bar', '', 'baz']);
         let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(1, 0), new Position(1, 2)));
         let mockHistory = TypeMoq.Mock.ofType<IHistory>();
+        let mockCreateTextEditorDecorationType = createMockCreateTextEditorDecorationType();
 
         mockDocument.setup(d => d.fileName).returns(() => 'myfile.tidal');
 
-        let repl = new Repl(mockLogger.object, mockTidal.object, 
-            mockEditor.object, mockHistory.object, 'rgba(100,250,100,0.3)');
-
-        repl.evaluate(true);
+        let repl = new Repl(mockTidal.object, mockEditor.object, mockHistory.object, 
+            'rgba(100,250,100,0.3)', mockCreateTextEditorDecorationType.object);
+        await repl.evaluate(true);
 
         mockTidal.verify(t => t.sendTidalExpression('Foo\r\nbar'), TypeMoq.Times.once());
-
-        mockTidal.verifyAll();
+        mockHistory.verify(h => h.log(TypeMoq.It.isAny()), TypeMoq.Times.once());
     });
 
-    test('Single-line expression evaluated in .tidal file', () => {
-        let mockLogger = TypeMoq.Mock.ofType<ILogger>();
+    test('Single-line expression evaluated in .tidal file', async () => {
         let mockTidal = TypeMoq.Mock.ofType<ITidal>();
         let mockDocument = createMockDocument(['Foo', 'bar', '', 'baz']);
         let mockEditor = createMockEditor(mockDocument.object, new Selection(new Position(1, 0), new Position(1, 2)));
         let mockHistory = TypeMoq.Mock.ofType<IHistory>();
+        let mockCreateTextEditorDecorationType = createMockCreateTextEditorDecorationType();
 
         mockDocument.setup(d => d.fileName).returns(() => 'myfile.tidal');
 
-        let repl = new Repl(mockLogger.object, mockTidal.object, 
-            mockEditor.object, mockHistory.object, 'rgba(100,250,100,0.3)');
-
-        repl.evaluate(false);
+        let repl = new Repl(mockTidal.object, mockEditor.object, mockHistory.object, 
+            'rgba(100,250,100,0.3)', mockCreateTextEditorDecorationType.object);
+        await repl.evaluate(false);
 
         mockTidal.verify(t => t.sendTidalExpression('bar'), TypeMoq.Times.once());
-
-        mockTidal.verifyAll();
+        mockHistory.verify(h => h.log(TypeMoq.It.isAny()), TypeMoq.Times.once());
     });
 });

@@ -18,7 +18,8 @@ export function activate(context: ExtensionContext) {
     function getRepl(repls: Map<TextEditor, Repl>, textEditor: TextEditor | undefined): Repl | undefined {
         if (textEditor === undefined) { return undefined; }
         if (!repls.has(textEditor)) {
-            repls.set(textEditor, new Repl(logger, tidal, textEditor, history, config.feedbackColor()));
+            repls.set(textEditor, 
+                new Repl(tidal, textEditor, history, config.feedbackColor(), window.createTextEditorDecorationType));
         }
         return repls.get(textEditor);
     }

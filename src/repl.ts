@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { ILogger } from './logging';
 import { ITidal } from './tidal';
-import { TidalEditor } from './editor';
+import { TidalEditor, TidalExpression } from './editor';
 import { IHistory } from './history';
+import { DecorationRenderOptions, TextEditorDecorationType } from 'vscode';
 
 /**
  * Provides the UI commands for an interactive Tidal session.
@@ -15,9 +15,10 @@ export interface IRepl {
 export class Repl implements IRepl {
     public readonly postChannel: vscode.OutputChannel | null = null;
 
-    constructor(private logger: ILogger, private tidal: ITidal, 
+    constructor(private tidal: ITidal, 
         private textEditor: vscode.TextEditor, private history: IHistory, 
-        private feedbackColor: string) {
+        private feedbackColor: string, 
+        private createTextEditorDecorationType: (_: DecorationRenderOptions) => TextEditorDecorationType) {
     }
 
     private editingTidalFile(): boolean {
@@ -30,7 +31,7 @@ export class Repl implements IRepl {
         }
 
         await this.tidal.sendTidalExpression('hush');
-        this.logger.log('hush');
+        this.history.log(new TidalExpression('hush', new vscode.Range(0, 0, 0, 0)));
     }
 
     public async evaluate(isMultiline: boolean) {
@@ -47,7 +48,7 @@ export class Repl implements IRepl {
     }
 
     private feedback(range: vscode.Range): void {
-        const flashDecorationType = vscode.window.createTextEditorDecorationType({
+        const flashDecorationType = this.createTextEditorDecorationType({
             backgroundColor: this.feedbackColor
         });
         this.textEditor.setDecorations(flashDecorationType, [range]);
