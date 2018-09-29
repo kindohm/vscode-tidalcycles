@@ -72,7 +72,7 @@ export class Tidal implements ITidal {
         }
 
         await this.ghci.writeLn(':{');
-        const splits = expression.split(this.lineEnding);
+        const splits = expression.split('\r\n');
         for (let i = 0; i < splits.length; i++) {
             await this.ghci.writeLn(splits[i]);
         }
