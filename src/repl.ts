@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { ILogger } from './logging';
-import { IGhci } from './ghci';
 import { ITidal } from './tidal';
 import { TidalEditor } from './editor';
 

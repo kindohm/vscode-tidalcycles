@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
     const config = new Config();
     const ghci = new Ghci(logger, config.useStackGhci(), config.ghciPath());
     const tidal = new Tidal(logger, ghci, config.bootTidalPath(), config.useBootFileInCurrentDirectory());
-    const repl = new Repl(logger, ghci, tidal, config.showEvalCount(), config.feedbackColor());
+    const repl = new Repl(logger, tidal, config.showEvalCount(), config.feedbackColor());
 
     if (config.showGhciOutput()) {
         ghci.stdout.on('data', (data: any) => {
