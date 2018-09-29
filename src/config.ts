@@ -16,20 +16,8 @@ export class Config {
         return this.getConfiguration(this.configSection).get('ghciPath', 'ghci');
     }
 
-    public randomMessages(): string[] {
-        return this.getConfiguration(this.configSection).get('randomMessages', []);
-    }
-
-    public randomMessageProbability(): number {
-        return this.getConfiguration(this.configSection).get('randomMessageProbability', 0);
-    }
-
     public showEvalCount(): boolean {
         return this.getConfiguration(this.configSection).get('showEvalCount', false);
-    }
-
-    public evalCountPrefix(): string {
-        return this.getConfiguration(this.configSection).get('evalCountPrefix', 'evals: ');
     }
 
     public showGhciOutput(): boolean {

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { Config } from './config';
 import { ILogger } from './logging';
 import { IGhci } from './ghci';
 import { ITidal } from './tidal';
@@ -17,7 +16,8 @@ export class Repl implements IRepl {
     postChannel: vscode.OutputChannel | null = null;
     evalCount = 0;
 
-    constructor(private logger: ILogger, private config: Config, private ghci: IGhci, private tidal: ITidal) {
+    constructor(private logger: ILogger, private tidal: ITidal, 
+        private showEvalCount: boolean, private feedbackColor: string) {
     }
 
     private static editingTidalFile(): boolean {
@@ -52,30 +52,16 @@ export class Repl implements IRepl {
             this.feedback(block.range);
         }
         this.incrementEvalCount();
-        this.showRandomMessage();
     }
 
     private incrementEvalCount() {
         this.evalCount++;
-        if (this.config.showEvalCount()) { this.logger.log(`${this.config.evalCountPrefix()}${this.evalCount} `); }
-    }
-
-    private showRandomMessage() {
-        const messages = this.config.randomMessages();
-        if (messages.length > 0 && this.config.randomMessageProbability() > Math.random()) {
-            this.logger.log(`${messages[this.getRandomIntInclusive(0, messages.length - 1)]} `);
-        }
-    }
-
-    private getRandomIntInclusive(min: number, max: number) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+        if (this.showEvalCount) { this.logger.log(`Evals: ${this.evalCount} `); }
     }
 
     private feedback(range: vscode.Range): void {
         const flashDecorationType = vscode.window.createTextEditorDecorationType({
-            backgroundColor: this.config.feedbackColor()
+            backgroundColor: this.feedbackColor
         });
 
         if (vscode.window.activeTextEditor === undefined) {

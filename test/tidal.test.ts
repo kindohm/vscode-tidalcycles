@@ -1,5 +1,4 @@
 import { Ghci } from '../src/ghci';
-import { Config } from '../src/config';
 import { Tidal } from '../src/tidal';
 import { Logger } from '../src/logging';
 import * as TypeMoq from "typemoq";
