@@ -14,18 +14,10 @@ export interface IRepl {
 }
 
 export class Repl implements IRepl {
-    logger: ILogger;
-    config: Config;
-    ghci: IGhci;
-    tidal: ITidal;
     postChannel: vscode.OutputChannel | null = null;
     evalCount = 0;
 
-    constructor(logger: ILogger, config: Config, ghci: IGhci, tidal: ITidal) {
-        this.logger = logger;
-        this.config = config;
-        this.ghci = ghci;
-        this.tidal = tidal;
+    constructor(private logger: ILogger, private config: Config, private ghci: IGhci, private tidal: ITidal) {
     }
 
     private static editingTidalFile(): boolean {

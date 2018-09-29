@@ -1,5 +1,4 @@
 import { ILogger } from "./logging";
-import { Config } from "./config";
 import { IGhci } from "./ghci";
 import * as vscode from 'vscode';
 
@@ -12,16 +11,11 @@ export interface ITidal {
 }
 
 export class Tidal implements ITidal {
-    logger: ILogger;
-    config: Config;
-    ghci: IGhci;
     tidalBooted: boolean = false;
     lineEnding = vscode.workspace.getConfiguration('files', null).get('eol', '\n');
 
-    constructor(logger: ILogger, config: Config, ghci: IGhci) {
-        this.logger = logger;
-        this.config = config;
-        this.ghci = ghci;
+    constructor(private logger: ILogger, private ghci: IGhci, 
+        private bootTidalPath: string | null, private useBootFileInCurrentDirectory: boolean) {
     }
 
     private async bootTidal(): Promise<boolean> {
@@ -31,8 +25,8 @@ export class Tidal implements ITidal {
 
         // Use a custom boot file if the user has specified it. If it cannot be loaded, perform the
         // default Tidal boot sequence.
-        const bootTidalPath = this.config.bootTidalPath();
-        const useBootFileInCurrentDirectory = this.config.useBootFileInCurrentDirectory();
+        const bootTidalPath = this.bootTidalPath;
+        const useBootFileInCurrentDirectory = this.useBootFileInCurrentDirectory;
 
         let uri: vscode.Uri | null = null;
 

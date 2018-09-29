@@ -7,9 +7,8 @@ import * as TypeMoq from "typemoq";
 suite("Tidal", () => {
     test("Single line sent to Tidal is passed to GHCi", () => {
         let mockedLogger = TypeMoq.Mock.ofType<Logger>();
-        let mockedConfig = TypeMoq.Mock.ofType<Config>();
         let mockedGhci = TypeMoq.Mock.ofType<Ghci>();
-        let tidal: Tidal = new Tidal(mockedLogger.object, mockedConfig.object, mockedGhci.object);
+        let tidal: Tidal = new Tidal(mockedLogger.object, mockedGhci.object, null, false);
         tidal.tidalBooted = true;
 
         mockedGhci.setup(ghci => ghci.writeLn(':{')).verifiable(TypeMoq.Times.once());
@@ -23,9 +22,8 @@ suite("Tidal", () => {
 
     test("Multiple lines sent to Tidal are passed to GHCi", () => {
         let mockedLogger = TypeMoq.Mock.ofType<Logger>();
-        let mockedConfig = TypeMoq.Mock.ofType<Config>();
         let mockedGhci = TypeMoq.Mock.ofType<Ghci>();
-        let tidal: Tidal = new Tidal(mockedLogger.object, mockedConfig.object, mockedGhci.object);
+        let tidal: Tidal = new Tidal(mockedLogger.object, mockedGhci.object, null, false);
         tidal.tidalBooted = true;
 
         mockedGhci.setup(ghci => ghci.writeLn(':{')).verifiable(TypeMoq.Times.once());

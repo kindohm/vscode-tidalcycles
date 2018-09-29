@@ -1,5 +1,5 @@
 import { TextEditor, TextLine, Range, Position, TextDocument, Selection } from 'vscode';
-import * as TypeMoq from "typemoq";
+import * as TypeMoq from 'typemoq';
 import { expect, assert } from 'chai';
 import { TidalEditor } from '../src/editor';
 

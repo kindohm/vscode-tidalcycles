@@ -1,9 +1,9 @@
 import { ChildProcess, spawn } from 'child_process';
-import { Config } from './config';
 import { ILogger } from './logging';
 import * as vscode from 'vscode';
 import * as split2 from 'split2';
 import { EOL } from 'os';
+import { Stream } from 'stream';
 
 /**
  * Provides an interface for sending commands to a GHCi session.
@@ -27,12 +27,11 @@ export class MockGhci implements IGhci {
 
 export class Ghci {
     private ghciProcess: ChildProcess | null = null;
-    private logger: ILogger;
-    private config: Config;
+    public readonly stdout: Stream = new Stream();
+    public readonly stderr: Stream = new Stream();
 
-    constructor(logger: ILogger, config: Config) {
+    constructor(private logger: ILogger, private useStack: boolean, private ghciPath: string) {
         this.logger = logger;
-        this.config = config;
     }
 
     private async getGhciProcess(): Promise<ChildProcess> {
@@ -40,22 +39,20 @@ export class Ghci {
             return this.ghciProcess;
         }
 
-        if (this.config.useStackGhci()) {
+        if (this.useStack) {
             this.ghciProcess =
                 spawn('stack', ['--silent', 'ghci', '--ghci-options', '-XOverloadedStrings', '--ghci-options', '-v0'], {
                     cwd: vscode.workspace.rootPath
                 });
         } else {
-            this.ghciProcess = spawn(this.config.ghciPath(), ['-XOverloadedStrings', '-v0']);
+            this.ghciProcess = spawn(this.ghciPath, ['-XOverloadedStrings', '-v0']);
         }
 
         this.ghciProcess.stderr.pipe(split2()).on('data', (data : any) => {
-            this.logger.warning(`GHCi: ${data.toString('utf8')}`);
+            this.stderr.emit('data', data);
         });
-        this.ghciProcess.stdin.pipe(split2()).on('data', (data: any) => {
-            if (this.config.showGhciOutput()) {
-                this.logger.log(`GHCi: ${data.toString('utf8')}`);
-            }
+        this.ghciProcess.stdout.pipe(split2()).on('data', (data: any) => {
+            this.stdout.emit('data', data);
         });
         return this.ghciProcess;
     }

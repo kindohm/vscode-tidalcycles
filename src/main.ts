@@ -9,9 +9,18 @@ export function activate(context: vscode.ExtensionContext) {
 
     const logger = new Logger(vscode.window.createOutputChannel('TidalCycles'));
     const config = new Config();
-    const ghci = new Ghci(logger, config);
-    const tidal = new Tidal(logger, config, ghci);
+    const ghci = new Ghci(logger, config.useStackGhci(), config.ghciPath());
+    const tidal = new Tidal(logger, ghci, config.bootTidalPath(), config.useBootFileInCurrentDirectory());
     const repl = new Repl(logger, config, ghci, tidal);
+
+    if (config.showGhciOutput()) {
+        ghci.stdout.on('data', (data: any) => {
+            logger.log(data);
+        });
+    }
+    ghci.stderr.on('data', (data: any) => {
+        logger.warning(`GHCi | ${data}`);
+    });
 
     const evalSingle = vscode.commands.registerCommand('tidal.eval', function () {
         repl.evaluate(false);
