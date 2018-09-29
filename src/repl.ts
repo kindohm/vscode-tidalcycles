@@ -3,6 +3,7 @@ import { ITidal } from './tidal';
 import { TidalEditor, TidalExpression } from './editor';
 import { IHistory } from './history';
 import { DecorationRenderOptions, TextEditorDecorationType } from 'vscode';
+import { Config } from './config';
 
 /**
  * Provides the UI commands for an interactive Tidal session.
@@ -17,7 +18,7 @@ export class Repl implements IRepl {
 
     constructor(private tidal: ITidal, 
         private textEditor: vscode.TextEditor, private history: IHistory, 
-        private feedbackColor: string, 
+        private config: Config, 
         private createTextEditorDecorationType: (_: DecorationRenderOptions) => TextEditorDecorationType) {
     }
 
@@ -49,7 +50,7 @@ export class Repl implements IRepl {
 
     private feedback(range: vscode.Range): void {
         const flashDecorationType = this.createTextEditorDecorationType({
-            backgroundColor: this.feedbackColor
+            backgroundColor: this.config.feedbackColor()
         });
         this.textEditor.setDecorations(flashDecorationType, [range]);
         setTimeout(function () {

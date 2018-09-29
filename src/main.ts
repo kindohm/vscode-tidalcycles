@@ -13,13 +13,13 @@ export function activate(context: ExtensionContext) {
     const config = new Config();
     const ghci = new Ghci(logger, config.useStackGhci(), config.ghciPath());
     const tidal = new Tidal(logger, ghci, config.bootTidalPath(), config.useBootFileInCurrentDirectory());
-    const history = new History(logger, config.showEvalCount());
+    const history = new History(logger, config);
 
     function getRepl(repls: Map<TextEditor, Repl>, textEditor: TextEditor | undefined): Repl | undefined {
         if (textEditor === undefined) { return undefined; }
         if (!repls.has(textEditor)) {
             repls.set(textEditor, 
-                new Repl(tidal, textEditor, history, config.feedbackColor(), window.createTextEditorDecorationType));
+                new Repl(tidal, textEditor, history, config, window.createTextEditorDecorationType));
         }
         return repls.get(textEditor);
     }

@@ -1,5 +1,6 @@
 import { TidalExpression } from './editor';
 import { ILogger } from './logging';
+import { Config } from './config';
 
 /**
  * Logs the history of a Tidal session.
@@ -12,12 +13,12 @@ export interface IHistory {
 export class History implements IHistory {
     private evalCount: number = 0;
 
-    constructor(private logger: ILogger, private logEvalCount: boolean) {
+    constructor(private logger: ILogger, private config: Config) {
     }
 
     public log(expression: TidalExpression): void {
         this.evalCount++;
-        if (this.logEvalCount) {
+        if (this.config.showEvalCount()) {
             this.logger.log(`Evals: ${this.evalCount}`);
         }
     }

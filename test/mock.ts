@@ -1,4 +1,7 @@
-import { TextEditor, TextLine, Range, Position, TextDocument, Selection, TextEditorDecorationType, window, DecorationRenderOptions } from 'vscode';
+import {
+    TextEditor, TextLine, Range, Position, TextDocument, Selection,
+    TextEditorDecorationType, window, DecorationRenderOptions
+} from 'vscode';
 import * as TypeMoq from 'typemoq';
 
 class TestTextLine implements TextLine {
