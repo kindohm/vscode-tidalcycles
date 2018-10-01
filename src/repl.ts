@@ -41,6 +41,7 @@ export class Repl implements IRepl {
         }
 
         const block = new TidalEditor(this.textEditor).getTidalExpressionUnderCursor(isMultiline);
+        
         if (block) {
             await this.tidal.sendTidalExpression(block.expression);
             this.feedback(block.range);

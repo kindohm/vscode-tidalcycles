@@ -9,23 +9,10 @@ import { Stream } from 'stream';
  * Provides an interface for sending commands to a GHCi session.
  */
 export interface IGhci {
-    writeLn(command: string): Promise<void>;
+    writeLn(command: string): void;
 }
 
-export class MockGhci implements IGhci {
-    private logger: ILogger;
-
-    constructor(logger: ILogger) {
-        this.logger = logger;
-    }
-
-    public async writeLn(command: string): Promise<void> {
-        this.logger.log(command);
-        return;
-    }
-}
-
-export class Ghci {
+export class Ghci implements IGhci {
     private ghciProcess: ChildProcess | null = null;
     public readonly stdout: Stream = new Stream();
     public readonly stderr: Stream = new Stream();
@@ -34,21 +21,25 @@ export class Ghci {
         this.logger = logger;
     }
 
-    private async getGhciProcess(): Promise<ChildProcess> {
+    private getGhciProcess(): ChildProcess {
         if (this.ghciProcess !== null) {
             return this.ghciProcess;
         }
 
         if (this.useStack) {
             this.ghciProcess =
-                spawn('stack', ['--silent', 'ghci', '--ghci-options', '-XOverloadedStrings', '--ghci-options', '-v0'], {
+                spawn('stack', ['--silent', 'ghci', '--ghci-options', '-XOverloadedStrings', '--ghci-options', '-v0'],
+                    {
+                        cwd: vscode.workspace.rootPath
+                    });
+        } else {
+            this.ghciProcess = spawn(this.ghciPath, ['-XOverloadedStrings', '-v0'],
+                {
                     cwd: vscode.workspace.rootPath
                 });
-        } else {
-            this.ghciProcess = spawn(this.ghciPath, ['-XOverloadedStrings', '-v0']);
         }
 
-        this.ghciProcess.stderr.pipe(split2()).on('data', (data : any) => {
+        this.ghciProcess.stderr.pipe(split2()).on('data', (data: any) => {
             this.stderr.emit('data', data);
         });
         this.ghciProcess.stdout.pipe(split2()).on('data', (data: any) => {
@@ -56,10 +47,10 @@ export class Ghci {
         });
         return this.ghciProcess;
     }
-    
-    public async write(command: string) {
+
+    private write(command: string) {
         try {
-            let ghciProcess = await this.getGhciProcess();
+            let ghciProcess = this.getGhciProcess();
             ghciProcess.stdin.write(command);
         } catch (e) {
             this.logger.error(`Failed to get GHCi process: ${e}`);
@@ -67,7 +58,7 @@ export class Ghci {
         }
     }
 
-    public async writeLn(command: string) {
-        return await this.write(`${command}${EOL}`);
+    public writeLn(command: string) {
+        this.write(`${command}${EOL}`);
     }
 }

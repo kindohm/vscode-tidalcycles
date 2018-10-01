@@ -14,7 +14,7 @@ export class Tidal implements ITidal {
     tidalBooted: boolean = false;
     lineEnding = vscode.workspace.getConfiguration('files', null).get('eol', '\n');
 
-    constructor(private logger: ILogger, private ghci: IGhci, 
+    constructor(private logger: ILogger, private ghci: IGhci,
         private bootTidalPath: string | null, private useBootFileInCurrentDirectory: boolean) {
     }
 
@@ -53,8 +53,9 @@ export class Tidal implements ITidal {
         }
 
         for (const command of bootCommands) {
-            await this.ghci.writeLn(command);
+            this.ghci.writeLn(command);
         }
+
         this.tidalBooted = true;
         return true;
     }
@@ -65,12 +66,12 @@ export class Tidal implements ITidal {
             return;
         }
 
-        await this.ghci.writeLn(':{');
+        this.ghci.writeLn(':{');
         const splits = expression.split('\r\n');
         for (let i = 0; i < splits.length; i++) {
-            await this.ghci.writeLn(splits[i]);
+            this.ghci.writeLn(splits[i]);
         }
-        await this.ghci.writeLn(':}');
+        this.ghci.writeLn(':}');
     }
 
     private async getBootCommandsFromFile(uri: vscode.Uri): Promise<string[] | null> {
