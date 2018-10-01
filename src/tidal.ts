@@ -34,7 +34,7 @@ export class Tidal implements ITidal {
             const folders = vscode.workspace.workspaceFolders;
 
             if (folders !== undefined && folders.length > 0) {
-                uri = vscode.Uri.parse(`file:///${folders[0]}/BootTidal.hs`);
+                uri = vscode.Uri.parse(`file://${folders[0].uri.path}/BootTidal.hs`);
             } else {
                 this.logger.warning('You must open a folder or workspace in order to use the Tidal \
                 useBootFileInCurrentDirectory setting.');
