@@ -1,5 +1,9 @@
 # Change Log
 
+## "0.6.0"
+- refactored to TypeScript
+- added unit tests
+
 ## "0.5.10"
 - revert GHCI Linux change (published bug)
 

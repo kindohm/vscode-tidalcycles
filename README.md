@@ -38,10 +38,10 @@ TidalCycles and SuperDirt at [TidalCycles](https://tidalcycles.org).
 Take a look in the Contributions tab on the extension page to see what config setting options are available. Here is
 a more verbose explanation of a few of them:
 
-### GHCI path
+### GHCi path
 
 Probably the most important setting. This is the path to `ghci.exe` on your machine. 
-If it's on your OS PATH, then just setting this value to `ghci` will probably do fine.
+If it's on your OS `PATH`, then just setting this value to `ghci` will probably do fine.
 
 Examples:
 
@@ -50,6 +50,8 @@ Examples:
 `"tidalcycles.ghciPath" : "c:\\path\\to\\ghci.exe"`
 
 `"tidalcycles.ghciPath" : "/path/to/ghci"`
+
+If you are using Stack, you can enable the `useStackGhci` option and the extension will use `stack ghci` to launch GHCi.
 
 ### Boot Files
 
@@ -79,8 +81,7 @@ Examples:
     "tidalcycles.ghciPath" : "ghci",
     "tidalcycles.evalCountPrefix": "Evals: ",
     "tidalcycles.feedbackColor": "rgba(100,250,100,0.5)",
-    "tidalcycles.randomMessages": ["OH HAI", "This is a random message.", "I am coding."],
-    "tidalcycles.randomMessageProbability": 0.5,
+    "tidalcycles.useStackGhci": false,
     "tidalcycles.showEvalCount": true,
     "tidalcycles.showGhciOutput": false,
     "tidalcycles.showOutputInConsoleChannel": true,
