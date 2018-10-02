@@ -40,7 +40,7 @@ export class Tidal implements ITidal {
                 useBootFileInCurrentDirectory setting.');
             }
         } else if (bootTidalPath) {
-            uri = vscode.Uri.parse(`file:///${bootTidalPath}`);
+            uri = vscode.Uri.file(`${bootTidalPath}`);
         }
 
         let bootCommands: string[] = this.bootCommands;
@@ -80,10 +80,10 @@ export class Tidal implements ITidal {
 
         let doc: vscode.TextDocument;
         try {
-            doc = await vscode.workspace.openTextDocument(uri);
+            doc = await vscode.workspace.openTextDocument(uri); 
             return doc.getText().split(this.lineEnding);
         } catch (e) {
-            this.logger.error(`Failed to load boot commands from ${uri}`);
+            this.logger.error(`Failed to load boot commands from ${uri.fsPath}`);
             return null;
         } finally {
             return null;
