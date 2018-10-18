@@ -17,8 +17,11 @@ export class Ghci implements IGhci {
     public readonly stdout: Stream = new Stream();
     public readonly stderr: Stream = new Stream();
 
-    constructor(private logger: ILogger, private useStack: boolean, private ghciPath: string) {
-        this.logger = logger;
+    constructor(
+        private logger: ILogger,
+        private useStack: boolean,
+        private ghciPath: string,
+        private showGhciOutput: boolean) {
     }
 
     private getGhciProcess(): ChildProcess {
@@ -27,13 +30,20 @@ export class Ghci implements IGhci {
         }
 
         if (this.useStack) {
-            this.ghciProcess =
-                spawn('stack', ['--silent', 'ghci', '--ghci-options', '-XOverloadedStrings', '--ghci-options', '-v0'],
-                    {
-                        cwd: vscode.workspace.rootPath
-                    });
+            var stackOptions = ['--silent', 'ghci', '--ghci-options', '-XOverloadedStrings'];
+            if (!this.showGhciOutput) {
+                stackOptions.push('--ghci-options', '-v0');
+            }
+            this.ghciProcess = spawn('stack', stackOptions,
+                {
+                    cwd: vscode.workspace.rootPath
+                });
         } else {
-            this.ghciProcess = spawn(this.ghciPath, ['-XOverloadedStrings', '-v0'],
+            var ghciOptions = ['-XOverloadedStrings'];
+            if (!this.showGhciOutput) {
+                ghciOptions.push('-v0');
+            }
+            this.ghciProcess = spawn(this.ghciPath, ghciOptions,
                 {
                     cwd: vscode.workspace.rootPath
                 });
@@ -42,7 +52,7 @@ export class Ghci implements IGhci {
         this.ghciProcess.stderr.pipe(split2()).on('data', (data: any) => {
             this.stderr.emit('data', data);
         });
-        this.ghciProcess.stdout.pipe(split2()).on('data', (data: any) => {
+        this.ghciProcess.stdout.on('data', (data: any) => {
             this.stdout.emit('data', data);
         });
         return this.ghciProcess;

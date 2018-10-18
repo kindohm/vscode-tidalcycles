@@ -11,15 +11,16 @@ export interface ILogger {
 }
 
 export class Logger implements ILogger {
-    channel: vscode.OutputChannel;
-
-    constructor(channel: vscode.OutputChannel) {
-        this.channel = channel;
+    constructor(private channel: vscode.OutputChannel) {
         this.channel.show(true);
     }
 
-    public log(message: string): void {
-        this.channel.appendLine(message);
+    public log(message: string, newLine: boolean = true): void {
+        if (newLine) {
+            this.channel.appendLine(message);
+        } else {
+            this.channel.append(message);
+        }
     }
 
     public warning(message: string): void {

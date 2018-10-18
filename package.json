@@ -65,7 +65,7 @@
                 "tidalcycles.ghciPath": {
                     "type": "string",
                     "default": "ghci",
-                    "description": "The path or command used to run ghci."
+                    "description": "The path or command used to run GHCi."
                 },
                 "tidalcycles.randomMessageProbability": {
                     "type": "number",
@@ -85,7 +85,7 @@
                 "tidalcycles.showGhciOutput": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Display the standard output from GHCI in the console."
+                    "description": "Display the standard output from GHCi in the console."
                 },
                 "tidalcycles.showOutputInConsoleChannel": {
                     "type": "boolean",
