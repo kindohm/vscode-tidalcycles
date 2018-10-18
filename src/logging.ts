@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
  * A simple logging interface.
  */
 export interface ILogger {
-
+    log(message: string, newLine: boolean): void;
     log(message: string): void;
     warning(message: string): void;
     error(message: string): void;

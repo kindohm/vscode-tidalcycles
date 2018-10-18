@@ -8,9 +8,9 @@ import { History } from './history';
 
 
 export function activate(context: ExtensionContext) {
-
-    const logger = new Logger(window.createOutputChannel('TidalCycles'));
     const config = new Config();
+    const logger = new Logger(window.createOutputChannel('TidalCycles'));
+
     const ghci = new Ghci(logger, config.useStackGhci(), config.ghciPath(), config.showGhciOutput());
     const tidal = new Tidal(logger, ghci, config.bootTidalPath(), config.useBootFileInCurrentDirectory());
     const history = new History(logger, config);
@@ -26,14 +26,15 @@ export function activate(context: ExtensionContext) {
 
     const repls = new Map<TextEditor, Repl>();
 
-    if (config.showGhciOutput()) {
+    if (config.showOutputInConsoleChannel()) {
         ghci.stdout.on('data', (data: any) => {
             logger.log(`${data}`, false);
         });
+
+        ghci.stderr.on('data', (data: any) => {
+            logger.warning(`GHCi | ${data}`);
+        });
     }
-    ghci.stderr.on('data', (data: any) => {
-        logger.warning(`GHCi | ${data}`);
-    });
 
     const evalSingleCommand = commands.registerCommand('tidal.eval', function () {
         const repl = getRepl(repls, window.activeTextEditor);
