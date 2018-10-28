@@ -67,7 +67,7 @@ export class Tidal implements ITidal {
         }
 
         this.ghci.writeLn(':{');
-        const splits = expression.split('\r\n');
+        const splits = expression.split(/[\r\n]+/);
         for (let i = 0; i < splits.length; i++) {
             this.ghci.writeLn(splits[i]);
         }
@@ -81,11 +81,9 @@ export class Tidal implements ITidal {
         let doc: vscode.TextDocument;
         try {
             doc = await vscode.workspace.openTextDocument(uri); 
-            return doc.getText().split(this.lineEnding);
+            return doc.getText().split(/[\r\n]+/);
         } catch (e) {
             this.logger.error(`Failed to load boot commands from ${uri.fsPath}`);
-            return null;
-        } finally {
             return null;
         }
     }
