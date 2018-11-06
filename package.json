@@ -2,12 +2,13 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-    "version": "0.5.10",
+    "version": "0.6.0",
     "publisher": "tidalcycles",
     "icon": "images/icon128.png",
     "repository": "https://github.com/kindohm/vscode-tidalcycles",
+    "license": "GPL-3.0",
     "engines": {
-        "vscode": "^1.5.0"
+        "vscode": "^1.23.0"
     },
     "categories": [
         "Other"
@@ -17,7 +18,7 @@
         "onCommand:tidal.evalMulti",
         "onCommand:tidal.hush"
     ],
-    "main": "./src/tidal",
+    "main": "./out/src/main",
     "contributes": {
         "commands": [
             {
@@ -64,7 +65,7 @@
                 "tidalcycles.ghciPath": {
                     "type": "string",
                     "default": "ghci",
-                    "description": "The path or command used to run ghci."
+                    "description": "The path or command used to run GHCi."
                 },
                 "tidalcycles.randomMessageProbability": {
                     "type": "number",
@@ -84,7 +85,7 @@
                 "tidalcycles.showGhciOutput": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Display the standard output from GHCI in the console."
+                    "description": "Display the standard output from GHCi in the console."
                 },
                 "tidalcycles.showOutputInConsoleChannel": {
                     "type": "boolean",
@@ -94,21 +95,35 @@
                 "tidalcycles.useBootFileInCurrentDirectory": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Specifies whether to use a BootTidal.hs file located in the current folder or first folder of the opened workspace."
+                    "description": "Use a BootTidal.hs file located in the current folder or first folder of the opened workspace."
+                },
+                "tidalcycles.useStackGhci": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use the GHCi instance provided by Stack in the current folder. If false, use the system-wide GHCi path."
                 }
             }
         }
     },
     "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
-        "mocha": "^2.3.3",
-        "eslint": "^3.6.0",
-        "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
+        "@types/chai": "^4.1.6",
+        "@types/mocha": "^5.2.5",
+        "@types/node": "^7.0.0",
+        "@types/split2": "^2.1.6",
+        "chai": "^4.1.2",
+        "mocha": "^5.2.0",
+        "typemoq": "^2.1.0",
+        "typescript": "^3.1.1",
+        "vscode": "^1.1.21"
+    },
+    "dependencies": {
+        "split2": "^3.0.0"
     }
 }
