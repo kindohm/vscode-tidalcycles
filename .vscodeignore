@@ -9,4 +9,3 @@ tsconfig.json
 vsc-extension-quickstart.md
 .eslintrc.json
 tslint.json
-node_modules/
