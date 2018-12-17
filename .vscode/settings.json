@@ -10,5 +10,7 @@
     "typescript.tsc.autoDetect": "off",
     "eslint.enable": false,
     "typescript.tsdk": "node_modules\\typescript\\lib",
-    "prettier.tabWidth": 4
+    "prettier.tabWidth": 4,
+    "prettier.tslintIntegration": true,
+    "prettier.disableLanguages": ["markdown"]
 }
