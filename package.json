@@ -2,11 +2,7 @@
     "name": "vscode-tidalcycles",
     "displayName": "TidalCycles for VSCode",
     "description": "TidalCycles support in VSCode",
-<<<<<<< HEAD
-    "version": "0.6.1",
-=======
-    "version": "1.0.0",
->>>>>>> 81d58ba6ccd5134c38a1ac6da8b5aa3a44c848de
+    "version": "1.0.1",
     "publisher": "tidalcycles",
     "icon": "images/icon128.png",
     "repository": "https://github.com/tidalcycles/vscode-tidalcycles",
