@@ -1,5 +1,8 @@
 # Change Log
 
+## "1.0.0"
+- make compatible with Tidal 1.0.0
+
 ## "0.6.0"
 - refactored to TypeScript
 - added unit tests
